@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8" />
@@ -157,7 +157,20 @@ async function createRecurrence(){
 }
 
 function exportCSV(){let rows=['Data;Tratta;Zona;Stato;Mezzo;Autista;Colli;VolumeMC;Saturazione;Ordini;Clienti;Note;PDF'];giri.forEach(g=>rows.push([g.data,g.tratta,g.zona,g.stato,g.mezzo,g.autista,g.colli,g.volume,g.sat,g.ordini,(g.clienti||'').replace(/\n/g,' | '),(g.note||'').replace(/\n/g,' | '),(g.docs||[]).map(d=>d.name).join(' | ')].map(x=>'"'+String(x||'').replace(/"/g,'""')+'"').join(';')));let a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));a.download='giri_spedizioni.csv';a.click()}
-if(!giri.length){let d=new Date();giri=[{id:'demo1',data:ds(d),tratta:'V1',zona:'Veneto',stato:'Programmato',mezzo:'8,5 m - 21/23 m³',autista:'Remo',colli:42,volume:18.5,sat:82,ordini:'102548,102612',clienti:'Cliente A - Verona\nCliente B - Padova',note:'Demo modificabile',docs:[]}];saveLocal()}render();
+
+// Rende disponibili le funzioni ai pulsanti HTML anche se lo script è type=module
+Object.assign(window,{exportCSV,openRecurrence,openAdd,changeMonth,goToday,render,openEdit,openDay,deleteGiro,closeEdit,saveGiro,closeRecurrence,createRecurrence,toggleRecFields,addFromDay,closeDay,openDoc,removeTempDoc});
+
+// Lettura in tempo reale da Firebase Firestore
+onSnapshot(query(col), snap => {
+  giri = snap.docs.map(d => ({id:d.id, ...d.data()}));
+  render();
+}, err => {
+  console.error('Errore Firestore:', err);
+  alert('Errore collegamento Firebase. Controlla le regole Firestore.');
+});
+
+render();
 </script>
 </body>
 </html>
