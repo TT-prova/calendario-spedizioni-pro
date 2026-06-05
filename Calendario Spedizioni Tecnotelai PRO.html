@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Calendario Spedizioni Tecnotelai PRO</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--line:#e4e7eb;--txt:#1d2733;--muted:#6b7280;--brand:#7b1f7a;--brand2:#004b67;--green:#149447;--yellow:#c98900;--red:#ce3333;--blue:#1565c0;}
+*{box-sizing:border-box} body{margin:0;font-family:Segoe UI,system-ui,Arial,sans-serif;background:var(--bg);color:var(--txt)}
+.top{height:64px;background:linear-gradient(90deg,#161616,#263746);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 22px;box-shadow:0 2px 8px #0002}.top h1{font-size:20px;margin:0;font-weight:650}.top .actions{display:flex;gap:8px}
+.btn{border:1px solid var(--line);background:#fff;color:var(--txt);border-radius:8px;padding:8px 12px;cursor:pointer;font-weight:600}.btn:hover{filter:brightness(.97)}.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}.btn.danger{color:#b42318;border-color:#f4b5ad}.btn.dark{background:#263746;color:#fff;border-color:#263746}.btn.small{padding:5px 8px;font-size:12px}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:14px 18px;background:#fff;border-bottom:1px solid var(--line)} select,input,textarea{border:1px solid #cfd6dd;border-radius:8px;padding:8px 10px;font:inherit;background:#fff} textarea{min-height:80px;resize:vertical}.monthTitle{min-width:210px;text-align:center;font-size:19px;font-weight:700}.spacer{flex:1}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:14px 18px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 1px 5px #0000000d}.stat .n{font-size:24px;font-weight:800}.stat .l{font-size:12px;color:var(--muted);margin-top:3px}.legend{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:0 18px 12px}.leg{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}.dot{width:10px;height:10px;border-radius:50%;display:inline-block}.green{background:var(--green)}.yellow{background:var(--yellow)}.red{background:var(--red)}.grey{background:#7b8794}
+.cal{margin:0 18px 18px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 2px 10px #00000010}.headers,.grid{display:grid;grid-template-columns:repeat(7,1fr)}.head{padding:11px;text-align:center;font-weight:700;color:#56616d;background:#f8fafc;border-right:1px solid var(--line)}.head:last-child{border-right:0}.cell{min-height:122px;border-top:1px solid var(--line);border-right:1px solid var(--line);padding:8px;background:#fff;cursor:pointer}.cell:nth-child(7n){border-right:0}.cell:hover{background:#fbfcfe}.cell.other{background:#f7f8fa;color:#a0a8b2}.cell.today{background:#f0f7ff}.daynum{font-weight:700;font-size:13px;margin-bottom:6px;color:#374151}.badge{display:flex;align-items:center;gap:5px;margin:4px 0;padding:5px 7px;border-radius:9px;font-size:12px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.badge .text{overflow:hidden;text-overflow:ellipsis}.badge.greenB{background:#e8f7ee;color:#0b6932}.badge.yellowB{background:#fff6df;color:#7a4d00}.badge.redB{background:#fdecec;color:#9b1c1c}.badge.greyB{background:#eef2f6;color:#475569}.more{font-size:12px;color:var(--blue);font-weight:600;margin-top:3px}
+.modalBg{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;z-index:30}.modalBg.open{display:flex}.modal{width:720px;max-width:96vw;max-height:92vh;overflow:auto;background:#fff;border-radius:18px;padding:22px;box-shadow:0 18px 60px #0005}.modal h2{margin:0 0 14px}.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;font-size:12px;font-weight:700;color:#53606d;margin:4px 0}.field.full{grid-column:1/-1}.modalActions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}.docList{display:flex;flex-direction:column;gap:8px;margin-top:8px}.docRow{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:8px;background:#fafafa}.cards{display:flex;flex-direction:column;gap:10px}.card{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}.cardTop{display:flex;align-items:center;justify-content:space-between;gap:8px}.cardTitle{font-weight:800}.pill{font-size:12px;border-radius:999px;padding:3px 8px;font-weight:800}.pill.green{background:#e8f7ee;color:#0b6932}.pill.yellow{background:#fff6df;color:#7a4d00}.pill.red{background:#fdecec;color:#9b1c1c}.meta{display:flex;gap:12px;flex-wrap:wrap;color:#64748b;font-size:13px;margin-top:6px}.empty{color:#7b8794;padding:12px}.footerNote{padding:0 18px 16px;color:#667085;font-size:12px}
+@media(max-width:900px){.stats{grid-template-columns:1fr 1fr}.cell{min-height:100px}.formGrid{grid-template-columns:1fr}.top{height:auto;gap:10px;align-items:flex-start;flex-direction:column;padding:14px}.monthTitle{text-align:left}}
+@media print{.top,.toolbar,.stats,.legend,.footerNote{display:none}.cal{margin:0;border-radius:0;box-shadow:none}.cell{min-height:95px}}
+</style>
+</head>
+<body>
+<div class="top"><h1>🚚 Calendario Spedizioni Tecnotelai PRO</h1><div class="actions"><button class="btn" onclick="exportCSV()">↓ CSV</button><button class="btn" onclick="window.print()">🖨 Stampa</button><button class="btn" onclick="openRecurrence()">↻ Programma ricorrenza</button><button class="btn primary" onclick="openAdd()">+ Nuovo giro</button></div></div>
+<div class="toolbar"><button class="btn" onclick="changeMonth(-1)">← Prec</button><div class="monthTitle" id="monthTitle"></div><button class="btn" onclick="changeMonth(1)">Succ →</button><button class="btn" onclick="goToday()">Oggi</button><span class="spacer"></span><label>Tratta</label><select id="fTratta" onchange="render()"><option value="">Tutte</option></select><label>Stato</label><select id="fStato" onchange="render()"><option value="">Tutti</option><option>Programmato</option><option>In corso</option><option>Completato</option><option>Annullato</option></select><label>Saturazione</label><select id="fSat" onchange="render()"><option value="">Tutte</option><option value="green">🟢 Pieno ≥80%</option><option value="yellow">🟡 Medio 50-79%</option><option value="red">🔴 Scarico <50%</option></select></div>
+<div class="stats"><div class="stat"><div class="n" id="sGiri">0</div><div class="l">Giri mese</div></div><div class="stat"><div class="n" id="sColli">0</div><div class="l">Colli/consegne</div></div><div class="stat"><div class="n" id="sVol">0</div><div class="l">Volume m³</div></div><div class="stat"><div class="n" id="sSat">0%</div><div class="l">Saturazione media</div></div><div class="stat"><div class="n" id="sDoc">0</div><div class="l">PDF allegati</div></div></div>
+<div class="legend"><span class="leg"><span class="dot green"></span>Pieno</span><span class="leg"><span class="dot yellow"></span>Da completare</span><span class="leg"><span class="dot red"></span>Scarico</span><span class="leg"><span class="dot grey"></span>Senza saturazione</span></div>
+<div class="cal"><div class="headers" id="headers"></div><div class="grid" id="grid"></div></div>
+<div class="footerNote">Nota: i dati e i PDF vengono salvati nel browser di questo PC tramite memoria locale/IndexedDB. Per uso condiviso servirà pubblicarlo su server interno o SharePoint, ma la struttura resta questa.</div>
+
+<div class="modalBg" id="editBg"><div class="modal"><h2 id="editTitle">Nuovo giro</h2><div class="formGrid">
+<div class="field"><label>Data giro</label><input type="date" id="data"></div>
+<div class="field"><label>Tratta</label><input list="tratte" id="tratta" placeholder="V1, E5, L1..."><datalist id="tratte"><option>V1</option><option>V2</option><option>E1</option><option>E5</option><option>L1</option><option>T3</option><option>R1</option><option>PUG</option></datalist></div>
+<div class="field"><label>Zona / Destinazione</label><input id="zona" placeholder="Veneto, Emilia, Lombardia..."></div>
+<div class="field"><label>Stato</label><select id="stato"><option>Programmato</option><option>In corso</option><option>Completato</option><option>Annullato</option></select></div>
+<div class="field"><label>Mezzo / camion</label><select id="mezzo"><option value="">Seleziona</option><option>7,5 m - 20/21 m³</option><option>8,5 m - 21/23 m³</option><option>9,0 m - oltre 24 m³</option></select></div>
+<div class="field"><label>Autista</label><input id="autista" placeholder="Remo, Gamberini..."></div>
+<div class="field"><label>Colli / consegne</label><input type="number" id="colli" min="0"></div>
+<div class="field"><label>Volume m³</label><input type="number" id="volume" min="0" step="0.1"></div>
+<div class="field"><label>Saturazione %</label><input type="number" id="sat" min="0" max="150" placeholder="0-100"></div>
+<div class="field"><label>Ordini collegati</label><input id="ordini" placeholder="102548, 102612..."></div>
+<div class="field full"><label>Clienti / fermate</label><textarea id="clienti" placeholder="Un cliente per riga"></textarea></div>
+<div class="field full"><label>Note</label><textarea id="note" placeholder="Note logistiche, orario partenza, urgenze..."></textarea></div>
+<div class="field full"><label>PDF allegati</label><input type="file" id="pdfInput" accept="application/pdf" multiple><div class="docList" id="docList"></div></div>
+</div><div class="modalActions"><button class="btn danger" id="delBtn" onclick="deleteGiro()">Elimina</button><button class="btn" onclick="closeEdit()">Annulla</button><button class="btn primary" onclick="saveGiro()">Salva</button></div></div></div>
+
+
+<div class="modalBg" id="recBg"><div class="modal"><h2>Programma giro ricorrente</h2><div class="formGrid">
+<div class="field"><label>Tipo ricorrenza</label><select id="recTipo" onchange="toggleRecFields()"><option value="weekly">Settimanale</option><option value="monthlyNth">Mensile avanzata</option></select></div>
+<div class="field"><label>Giorno settimana</label><select id="recWeekday"><option value="1">Lunedì</option><option value="2">Martedì</option><option value="3" selected>Mercoledì</option><option value="4">Giovedì</option><option value="5">Venerdì</option><option value="6">Sabato</option><option value="0">Domenica</option></select></div>
+<div class="field full" id="recNthBox"><label>Quali settimane del mese</label><div style="display:flex;gap:12px;flex-wrap:wrap;padding:8px 0"><label><input type="checkbox" class="recNth" value="1" checked> 1°</label><label><input type="checkbox" class="recNth" value="2"> 2°</label><label><input type="checkbox" class="recNth" value="3"> 3°</label><label><input type="checkbox" class="recNth" value="4" checked> 4°</label><label><input type="checkbox" class="recNth" value="5"> 5° se presente</label></div></div>
+<div class="field"><label>Dal</label><input type="date" id="recStart"></div>
+<div class="field"><label>Al</label><input type="date" id="recEnd"></div>
+<div class="field"><label>Tratta</label><input list="tratte" id="recTratta" placeholder="Marche, V1, E5..."></div>
+<div class="field"><label>Zona / Destinazione</label><input id="recZona" placeholder="Marche, Veneto..."></div>
+<div class="field"><label>Mezzo / camion</label><select id="recMezzo"><option value="">Seleziona</option><option>7,5 m - 20/21 m³</option><option>8,5 m - 21/23 m³</option><option>9,0 m - oltre 24 m³</option></select></div>
+<div class="field"><label>Autista</label><input id="recAutista" placeholder="Remo, Gamberini..."></div>
+<div class="field"><label>Colli / consegne</label><input type="number" id="recColli" min="0"></div>
+<div class="field"><label>Volume m³</label><input type="number" id="recVolume" min="0" step="0.1"></div>
+<div class="field"><label>Saturazione %</label><input type="number" id="recSat" min="0" max="150"></div>
+<div class="field"><label>Stato</label><select id="recStato"><option>Programmato</option><option>In corso</option><option>Completato</option><option>Annullato</option></select></div>
+<div class="field full"><label>Note</label><textarea id="recNote" placeholder="Esempio: Marche 1° e 4° mercoledì"></textarea></div>
+<div class="field full"><div class="empty" id="recPreview">Compila i campi per generare le date.</div></div>
+</div><div class="modalActions"><button class="btn" onclick="closeRecurrence()">Annulla</button><button class="btn primary" onclick="createRecurrence()">Crea giri</button></div></div></div>
+<div class="modalBg" id="dayBg"><div class="modal"><h2 id="dayTitle"></h2><div class="cards" id="dayCards"></div><div class="modalActions"><button class="btn primary" onclick="addFromDay()">+ Aggiungi giro</button><button class="btn" onclick="closeDay()">Chiudi</button></div></div></div>
+<script>
+const STORE='tt_giri_pro_v1';let giri=JSON.parse(localStorage.getItem(STORE)||'[]');let now=new Date(), y=now.getFullYear(), m=now.getMonth(), editing=null, selectedDay=null, tempDocs=[];
+function saveLocal(){localStorage.setItem(STORE,JSON.stringify(giri));}
+function pad(n){return String(n).padStart(2,'0')} function ds(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function satClass(v){v=Number(v)||0;if(v>=80)return 'green';if(v>=50)return 'yellow';if(v>0)return 'red';return 'grey'}
+function satLabel(v){let c=satClass(v);return c==='green'?'🟢':c==='yellow'?'🟡':c==='red'?'🔴':'⚪'}
+function filterGiri(list){let ft=fTratta.value,fs=fStato.value,fa=fSat.value;return list.filter(g=>(!ft||g.tratta===ft)&&(!fs||g.stato===fs)&&(!fa||satClass(g.sat)===fa));}
+function render(){headers.innerHTML=['Lun','Mar','Mer','Gio','Ven','Sab','Dom'].map(x=>'<div class="head">'+x+'</div>').join('');monthTitle.textContent=new Date(y,m,1).toLocaleDateString('it-IT',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());
+let tratte=[...new Set(giri.map(g=>g.tratta).filter(Boolean))].sort();let old=fTratta.value;fTratta.innerHTML='<option value="">Tutte</option>'+tratte.map(t=>`<option ${t==old?'selected':''}>${t}</option>`).join('');
+let first=new Date(y,m,1),last=new Date(y,m+1,0),start=(first.getDay()+6)%7,cells=Math.ceil((start+last.getDate())/7)*7;grid.innerHTML='';
+for(let i=0;i<cells;i++){let day=i-start+1,d=new Date(y,m,day),date=ds(d),cur=d.getMonth()===m,today=ds(d)===ds(new Date());let list=filterGiri(giri.filter(g=>g.data===date));let html=`<div class="daynum">${d.getDate()}</div>`;list.slice(0,3).forEach(g=>{let c=satClass(g.sat);html+=`<div class="badge ${c}B" onclick="event.stopPropagation();openEdit('${g.id}')"><span>${satLabel(g.sat)}</span><span class="text">${g.tratta||'Giro'} ${g.zona||''}</span><span style="margin-left:auto">${g.sat||0}%</span></div>`});if(list.length>3)html+=`<div class="more">+${list.length-3} altri</div>`;let el=document.createElement('div');el.className='cell '+(!cur?'other ':'')+(today?'today':'');el.innerHTML=html;el.onclick=()=>openDay(date);grid.appendChild(el)}updateStats();}
+function updateStats(){let mm=giri.filter(g=>{let d=new Date(g.data);return d.getFullYear()===y&&d.getMonth()===m});sGiri.textContent=mm.length;sColli.textContent=mm.reduce((a,g)=>a+(+g.colli||0),0);sVol.textContent=mm.reduce((a,g)=>a+(+g.volume||0),0).toFixed(1);let withSat=mm.filter(g=>+g.sat>0);sSat.textContent=(withSat.length?Math.round(withSat.reduce((a,g)=>a+(+g.sat||0),0)/withSat.length):0)+'%';sDoc.textContent=mm.reduce((a,g)=>a+(g.docs?g.docs.length:0),0)}
+function changeMonth(n){m+=n;if(m>11){m=0;y++}if(m<0){m=11;y--}render()} function goToday(){let d=new Date();y=d.getFullYear();m=d.getMonth();render()}
+function openAdd(date=''){editing=null;tempDocs=[];editTitle.textContent='Nuovo giro';delBtn.style.display='none';['tratta','zona','autista','colli','volume','sat','ordini','clienti','note'].forEach(id=>document.getElementById(id).value='');data.value=date||ds(new Date());stato.value='Programmato';mezzo.value='';renderDocs();editBg.classList.add('open')}
+function openEdit(id){let g=giri.find(x=>x.id===id);if(!g)return;editing=id;tempDocs=[...(g.docs||[])];editTitle.textContent='Modifica giro';delBtn.style.display='inline-block';data.value=g.data||'';tratta.value=g.tratta||'';zona.value=g.zona||'';stato.value=g.stato||'Programmato';mezzo.value=g.mezzo||'';autista.value=g.autista||'';colli.value=g.colli||'';volume.value=g.volume||'';sat.value=g.sat||'';ordini.value=g.ordini||'';clienti.value=g.clienti||'';note.value=g.note||'';renderDocs();editBg.classList.add('open')}
+function closeEdit(){editBg.classList.remove('open');editing=null;tempDocs=[];pdfInput.value=''}
+async function saveGiro(){if(!data.value||!tratta.value.trim()){alert('Inserisci almeno Data giro e Tratta');return}let obj={id:editing||Date.now().toString(),data:data.value,tratta:tratta.value.trim(),zona:zona.value.trim(),stato:stato.value,mezzo:mezzo.value,autista:autista.value.trim(),colli:colli.value,volume:volume.value,sat:sat.value,ordini:ordini.value,clienti:clienti.value,note:note.value,docs:tempDocs};if(editing)giri=giri.map(g=>g.id===editing?obj:g);else giri.push(obj);saveLocal();closeEdit();render();if(selectedDay)openDay(selectedDay)}
+function deleteGiro(){if(confirm('Eliminare questo giro?')){giri=giri.filter(g=>g.id!==editing);saveLocal();closeEdit();render();if(selectedDay)openDay(selectedDay)}}
+pdfInput.onchange=async(e)=>{for(const f of e.target.files){let dataUrl=await fileToDataURL(f);tempDocs.push({name:f.name,data:dataUrl,ts:Date.now()})}renderDocs();pdfInput.value=''};
+function fileToDataURL(f){return new Promise((res,rej)=>{let r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)})}
+function renderDocs(){docList.innerHTML=tempDocs.length?tempDocs.map((d,i)=>`<div class="docRow"><span>📄 ${d.name}</span><span><button class="btn small" onclick="openDoc(${i})">Apri</button> <button class="btn small danger" onclick="tempDocs.splice(${i},1);renderDocs()">X</button></span></div>`).join(''):'<div class="empty">Nessun PDF allegato</div>'}
+function openDoc(i,docs=tempDocs){let d=docs[i];if(!d)return;let w=window.open();w.document.write(`<iframe src="${d.data}" style="border:0;width:100%;height:100vh"></iframe>`)}
+function openDay(date){selectedDay=date;let d=new Date(date);dayTitle.textContent=d.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());let list=filterGiri(giri.filter(g=>g.data===date));dayCards.innerHTML=list.length?list.map(g=>{let c=satClass(g.sat);let docs=(g.docs||[]).map((d,i)=>`<button class="btn small" onclick="openDoc(${i}, giri.find(x=>x.id==='${g.id}').docs)">📄 ${d.name}</button>`).join(' ');return `<div class="card"><div class="cardTop"><div class="cardTitle">${satLabel(g.sat)} ${g.tratta||''} ${g.zona||''}</div><span class="pill ${c}">${g.sat||0}%</span></div><div class="meta"><span>🚛 ${g.mezzo||'-'}</span><span>👨‍✈️ ${g.autista||'-'}</span><span>📦 ${g.colli||0}</span><span>📏 ${g.volume||0} m³</span><span>${g.stato}</span></div>${g.clienti?`<div style="margin-top:8px;white-space:pre-line">${g.clienti}</div>`:''}${g.ordini?`<div class="meta">Ordini: ${g.ordini}</div>`:''}${docs?`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${docs}</div>`:''}<div style="margin-top:10px"><button class="btn small primary" onclick="closeDay();openEdit('${g.id}')">Modifica</button></div></div>`}).join(''):'<div class="empty">Nessun giro programmato in questa data.</div>';dayBg.classList.add('open')}
+function closeDay(){dayBg.classList.remove('open');selectedDay=null} function addFromDay(){let d=selectedDay;closeDay();openAdd(d)}
+
+function openRecurrence(){
+  let today=ds(new Date()); recStart.value=today;
+  let end=new Date(); end.setMonth(end.getMonth()+6); recEnd.value=ds(end);
+  recTipo.value='monthlyNth'; recWeekday.value='3'; recTratta.value='Marche'; recZona.value='Marche'; recStato.value='Programmato'; recMezzo.value=''; recAutista.value=''; recColli.value=''; recVolume.value=''; recSat.value=''; recNote.value='';
+  document.querySelectorAll('.recNth').forEach(c=>c.checked=(c.value==='1'||c.value==='4'));
+  toggleRecFields(); recBg.classList.add('open'); updateRecPreview();
+}
+function closeRecurrence(){recBg.classList.remove('open')}
+function toggleRecFields(){recNthBox.style.display=recTipo.value==='monthlyNth'?'block':'none'; updateRecPreview()}
+function getRecDates(){
+  if(!recStart.value||!recEnd.value) return [];
+  let start=new Date(recStart.value+'T00:00:00'), end=new Date(recEnd.value+'T00:00:00');
+  if(end<start) return [];
+  let weekday=Number(recWeekday.value), dates=[];
+  if(recTipo.value==='weekly'){
+    let d=new Date(start); while(d.getDay()!==weekday) d.setDate(d.getDate()+1);
+    while(d<=end){dates.push(ds(d)); d.setDate(d.getDate()+7)}
+  } else {
+    let nths=[...document.querySelectorAll('.recNth:checked')].map(x=>Number(x.value));
+    let cur=new Date(start.getFullYear(),start.getMonth(),1);
+    while(cur<=end){
+      nths.forEach(n=>{
+        let d=new Date(cur.getFullYear(),cur.getMonth(),1), count=0;
+        while(d.getMonth()===cur.getMonth()){
+          if(d.getDay()===weekday){count++; if(count===n){if(d>=start && d<=end) dates.push(ds(d)); break;}}
+          d.setDate(d.getDate()+1);
+        }
+      });
+      cur.setMonth(cur.getMonth()+1);
+    }
+  }
+  return [...new Set(dates)].sort();
+}
+function updateRecPreview(){
+  if(typeof recPreview==='undefined') return;
+  let dates=getRecDates();
+  recPreview.innerHTML=dates.length ? `<strong>${dates.length}</strong> giri da creare: `+dates.slice(0,8).map(x=>new Date(x).toLocaleDateString('it-IT')).join(', ')+(dates.length>8?' ...':'') : 'Nessuna data trovata. Controlla periodo e ricorrenza.';
+}
+['recStart','recEnd','recWeekday','recTipo'].forEach(id=>setTimeout(()=>{let e=document.getElementById(id); if(e) e.addEventListener('change',updateRecPreview)},0));
+setTimeout(()=>document.querySelectorAll('.recNth').forEach(c=>c.addEventListener('change',updateRecPreview)),0);
+function createRecurrence(){
+  let dates=getRecDates();
+  if(!recTratta.value.trim()){alert('Inserisci la tratta/zona, esempio Marche');return}
+  if(!dates.length){alert('Nessuna data da creare');return}
+  let series='RIC-'+Date.now(); let creati=0, saltati=0;
+  dates.forEach(date=>{
+    let exists=giri.some(g=>g.data===date && g.tratta===recTratta.value.trim() && g.zona===recZona.value.trim());
+    if(exists){saltati++; return}
+    giri.push({id:series+'-'+date,data:date,tratta:recTratta.value.trim(),zona:recZona.value.trim(),stato:recStato.value,mezzo:recMezzo.value,autista:recAutista.value.trim(),colli:recColli.value,volume:recVolume.value,sat:recSat.value,ordini:'',clienti:'',note:recNote.value,docs:[],series:series});
+    creati++;
+  });
+  saveLocal(); closeRecurrence(); render(); alert('Creati '+creati+' giri. Duplicati saltati: '+saltati);
+}
+
+function exportCSV(){let rows=['Data;Tratta;Zona;Stato;Mezzo;Autista;Colli;VolumeMC;Saturazione;Ordini;Clienti;Note;PDF'];giri.forEach(g=>rows.push([g.data,g.tratta,g.zona,g.stato,g.mezzo,g.autista,g.colli,g.volume,g.sat,g.ordini,(g.clienti||'').replace(/\n/g,' | '),(g.note||'').replace(/\n/g,' | '),(g.docs||[]).map(d=>d.name).join(' | ')].map(x=>'"'+String(x||'').replace(/"/g,'""')+'"').join(';')));let a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));a.download='giri_spedizioni.csv';a.click()}
+if(!giri.length){let d=new Date();giri=[{id:'demo1',data:ds(d),tratta:'V1',zona:'Veneto',stato:'Programmato',mezzo:'8,5 m - 21/23 m³',autista:'Remo',colli:42,volume:18.5,sat:82,ordini:'102548,102612',clienti:'Cliente A - Verona\nCliente B - Padova',note:'Demo modificabile',docs:[]}];saveLocal()}render();
+</script>
+</body>
+</html>
