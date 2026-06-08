@@ -80,7 +80,7 @@ const col = collection(db, "spedizioni_pro");
 let giri=[];let now=new Date(), y=now.getFullYear(), m=now.getMonth(), editing=null, selectedDay=null, tempDocs=[];
 function saveLocal(){}
 function pad(n){return String(n).padStart(2,'0')} function ds(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
-function satClass(v){v=Number(v)||0;if(v>=80)return 'green';if(v>=50)return 'yellow';if(v>0)return 'red';return 'grey'}
+function satClass(v){v=Number(v)||0;if(v>=80)return 'red';if(v>=50)return 'yellow';if(v>0)return 'green';return 'grey'}
 function satLabel(v){let c=satClass(v);return c==='green'?'🟢':c==='yellow'?'🟡':c==='red'?'🔴':'⚪'}
 function filterGiri(list){let ft=fTratta.value,fs=fStato.value,fa=fSat.value;return list.filter(g=>(!ft||g.tratta===ft)&&(!fs||g.stato===fs)&&(!fa||satClass(g.sat)===fa));}
 function render(){headers.innerHTML=['Lun','Mar','Mer','Gio','Ven','Sab','Dom'].map(x=>'<div class="head">'+x+'</div>').join('');monthTitle.textContent=new Date(y,m,1).toLocaleDateString('it-IT',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());
