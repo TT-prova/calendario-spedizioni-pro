@@ -41,8 +41,6 @@
 <div class="field full"><label>Note</label><textarea id="note" placeholder="Note logistiche, orario partenza, urgenze..."></textarea></div>
 <div class="field full"><label>PDF allegati</label><input type="file" id="pdfInput" accept="application/pdf" multiple><div class="docList" id="docList"></div></div>
 </div><div class="modalActions"><button class="btn danger" id="delBtn" onclick="deleteGiro()">Elimina</button><button class="btn" onclick="closeEdit()">Annulla</button><button class="btn primary" onclick="saveGiro()">Salva</button></div></div></div>
-
-
 <div class="modalBg" id="recBg"><div class="modal"><h2>Programma giro ricorrente</h2><div class="formGrid">
 <div class="field"><label>Tipo ricorrenza</label><select id="recTipo" onchange="toggleRecFields()"><option value="weekly">Settimanale</option><option value="monthlyNth">Mensile avanzata</option></select></div>
 <div class="field"><label>Giorno settimana</label><select id="recWeekday"><option value="1">Lunedì</option><option value="2">Martedì</option><option value="3" selected>Mercoledì</option><option value="4">Giovedì</option><option value="5">Venerdì</option><option value="6">Sabato</option><option value="0">Domenica</option></select></div>
