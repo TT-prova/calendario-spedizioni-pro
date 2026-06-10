@@ -134,6 +134,19 @@ function getRecDates(){
   }
   return [...new Set(dates)].sort();
 }
+  function calcolaSaturazione(){
+  const mezzo = document.getElementById('mezzo').value;
+  const volume = Number(document.getElementById('volume').value || 0);
+  let capacita = 0;
+
+  if(mezzo.includes('7,5')) capacita = 21;
+  if(mezzo.includes('8,5')) capacita = 23;
+  if(mezzo.includes('9,0')) capacita = 24;
+
+  if(capacita > 0 && volume > 0){
+    document.getElementById('sat').value = Math.round((volume / capacita) * 100);
+  }
+}
 function updateRecPreview(){
   if(typeof recPreview==='undefined') return;
   let dates=getRecDates();
