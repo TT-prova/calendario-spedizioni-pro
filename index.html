@@ -184,7 +184,7 @@ async function createRecurrence(){
 function exportCSV(){let rows=['Data;Tratta;Zona;Stato;Mezzo;Autista;Colli;VolumeMC;Saturazione;Ordini;Clienti;Note;PDF'];giri.forEach(g=>rows.push([g.data,g.tratta,g.zona,g.stato,g.mezzo,g.autista,g.colli,g.volume,g.sat,g.ordini,(g.clienti||'').replace(/\n/g,' | '),(g.note||'').replace(/\n/g,' | '),(g.docs||[]).map(d=>d.name).join(' | ')].map(x=>'"'+String(x||'').replace(/"/g,'""')+'"').join(';')));let a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));a.download='giri_spedizioni.csv';a.click()}
 
 // Rende disponibili le funzioni ai pulsanti HTML anche se lo script è type=module
-Object.assign(window,{exportCSV,openRecurrence,openAdd,changeMonth,goToday,render,openEdit,openDay,deleteGiro,closeEdit,saveGiro,closeRecurrence,createRecurrence,toggleRecFields,addFromDay,closeDay,openDoc,removeTempDoc});
+Object.assign(window,{exportCSV,openRecurrence,openAdd,changeMonth,goToday,render,openEdit,openDay,deleteGiro,closeEdit,saveGiro,closeRecurrence,createRecurrence,toggleRecFields,addFromDay,closeDay,openDoc,removeTempDoc,calcolaSaturazione});
 
 // Lettura in tempo reale da Firebase Firestore
 onSnapshot(query(col), snap => {
