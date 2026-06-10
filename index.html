@@ -30,10 +30,10 @@
 <div class="field"><label>Tratta</label><input list="tratte" id="tratta" placeholder="V1, E5, L1..."><datalist id="tratte"><option>V1</option><option>V2</option><option>E1</option><option>E5</option><option>L1</option><option>T3</option><option>R1</option><option>PUG</option></datalist></div>
 <div class="field"><label>Zona / Destinazione</label><input id="zona" placeholder="Veneto, Emilia, Lombardia..."></div>
 <div class="field"><label>Stato</label><select id="stato"><option>Programmato</option><option>Da preparare</option><option>Preparato</option><option>In carico</option><option>Caricato</option><option>Spedito</option><option>Consegnato</option><option>Completato</option><option>Annullato</option></select></div>
-<div class="field"><label>Mezzo / camion</label><select id="mezzo"><option value="">Seleziona</option><option>7,5 m - 20/21 m³</option><option>8,5 m - 21/23 m³</option><option>9,0 m - oltre 24 m³</option></select></div>
+<div class="field"><label>Mezzo / camion</label><select id="mezzo" onchange="calcolaSaturazione()"><option value="">Seleziona</option><option>7,5 m - 20/21 m³</option><option>8,5 m - 21/23 m³</option><option>9,0 m - oltre 24 m³</option></select></div>
 <div class="field"><label>Autista</label><input id="autista" placeholder="Remo, Gamberini..."></div>
 <div class="field"><label>Colli / consegne</label><input type="number" id="colli" min="0"></div>
-<div class="field"><label>Volume m³</label><input type="number" id="volume" min="0" step="0.1"></div>
+<div class="field"><label>Volume m³</label><input type="number" id="volume" min="0" step="0.1" onchange="calcolaSaturazione()" oninput="calcolaSaturazione()"></div>
 <div class="field"><label>Saturazione %</label><input type="number" id="sat" min="0" max="150" placeholder="0-100"></div>
 <div class="field"><label>Ordini collegati</label><input id="ordini" placeholder="102548, 102612..."></div>
 <div class="field full"><label>Clienti/Fermate</label><textarea id="clienti" placeholder="Un cliente per riga"></textarea></div>
@@ -141,6 +141,19 @@ function updateRecPreview(){
 }
 ['recStart','recEnd','recWeekday','recTipo'].forEach(id=>setTimeout(()=>{let e=document.getElementById(id); if(e) e.addEventListener('change',updateRecPreview)},0));
 setTimeout(()=>document.querySelectorAll('.recNth').forEach(c=>c.addEventListener('change',updateRecPreview)),0);
+  function calcolaSaturazione(){
+  const mezzo = document.getElementById('mezzo').value;
+  const volume = Number(document.getElementById('volume').value || 0);
+  let capacita = 0;
+
+  if(mezzo.includes('7,5')) capacita = 21;
+  if(mezzo.includes('8,5')) capacita = 23;
+  if(mezzo.includes('9,0')) capacita = 24;
+
+  if(capacita > 0 && volume > 0){
+    document.getElementById('sat').value = Math.round((volume / capacita) * 100);
+  }
+}
 async function createRecurrence(){
   let dates=getRecDates();
   if(!recTratta.value.trim()){alert('Inserisci la tratta/zona, esempio Marche');return}
