@@ -132,8 +132,7 @@ function getRecDates(){
     }
   }
   return [...new Set(dates)].sort();
-}
-  function calcolaSaturazione(){
+function calcolaSaturazione(){
   const mezzo = document.getElementById('mezzo').value;
   const volume = Number(document.getElementById('volume').value || 0);
   let capacita = 0;
