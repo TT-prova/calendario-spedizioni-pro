@@ -100,21 +100,6 @@ function removeTempDoc(i){tempDocs.splice(i,1);renderDocs()}
 function openDoc(i,docs=tempDocs){let d=docs[i];if(!d)return;let w=window.open();w.document.write(`<iframe src="${d.data}" style="border:0;width:100%;height:100vh"></iframe>`)}
 function openDay(date){selectedDay=date;let d=new Date(date);dayTitle.textContent=d.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());let list=filterGiri(giri.filter(g=>g.data===date));dayCards.innerHTML=list.length?list.map(g=>{let c=satClass(g.sat);let docs=(g.docs||[]).map((d,i)=>`<button class="btn small" onclick="openDoc(${i}, giri.find(x=>x.id==='${g.id}').docs)">📄 ${d.name}</button>`).join(' ');return `<div class="card"><div class="cardTop"><div class="cardTitle">${satLabel(g.sat)} ${g.tratta||''} ${g.zona||''}</div><span class="pill ${c}">${g.sat||0}%</span></div><div class="meta"><span>🚛 ${g.mezzo||'-'}</span><span>👨‍✈️ ${g.autista||'-'}</span><span>📦 ${g.colli||0}</span><span>📏 ${g.volume||0} m³</span><span>${g.stato}</span></div>${g.clienti?`<div style="margin-top:8px;white-space:pre-line">${g.clienti}</div>`:''}${g.ordini?`<div class="meta">Ordini: ${g.ordini}</div>`:''}${docs?`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${docs}</div>`:''}<div style="margin-top:10px"><button class="btn small primary" onclick="closeDay();openEdit('${g.id}')">Modifica</button></div></div>`}).join(''):'<div class="empty">Nessun giro programmato in questa data.</div>';dayBg.classList.add('open')}
 function closeDay(){dayBg.classList.remove('open');selectedDay=null} function addFromDay(){let d=selectedDay;closeDay();openAdd(d)}
-function calcolaSaturazione(){
-  const mezzo = document.getElementById('mezzo').value;
-  const volume = Number(document.getElementById('volume').value || 0);
-
-  let capacita = 0;
-
-  if(mezzo.includes('7,5')) capacita = 21;
-  if(mezzo.includes('8,5')) capacita = 23;
-  if(mezzo.includes('9,0')) capacita = 24;
-
-  if(capacita > 0 && volume > 0){
-    document.getElementById('sat').value =
-      Math.round((volume / capacita) * 100);
-  }
-}
 function openRecurrence(){
   let today=ds(new Date()); recStart.value=today;
   let end=new Date(); end.setMonth(end.getMonth()+6); recEnd.value=ds(end);
