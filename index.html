@@ -40,6 +40,10 @@
 <div class="field full"><label>Ritiri fornitori</label><textarea id="ritiri" placeholder="Un fornitore per riga"></textarea></div>
 <div class="field full"><label>Note</label><textarea id="note" placeholder="Note logistiche, orario partenza, urgenze..."></textarea></div>
 <div class="field full"><label>PDF allegati</label><input type="file" id="pdfInput" accept="application/pdf" multiple><div class="docList" id="docList"></div></div>
+  <div class="field full">
+  <label>Link BC</label>
+  <input id="linkBC" placeholder="https://bc01.tecnotelai.it/..." />
+</div>
 </div><div class="modalActions"><button class="btn danger" id="delBtn" onclick="deleteGiro()">Elimina</button><button class="btn" onclick="closeEdit()">Annulla</button><button class="btn primary" onclick="saveGiro()">Salva</button></div></div></div>
 <div class="modalBg" id="recBg"><div class="modal"><h2>Programma giro ricorrente</h2><div class="formGrid">
 <div class="field"><label>Tipo ricorrenza</label><select id="recTipo" onchange="toggleRecFields()"><option value="weekly">Settimanale</option><option value="monthlyNth">Mensile avanzata</option></select></div>
