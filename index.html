@@ -86,10 +86,30 @@ function pad(n){return String(n).padStart(2,'0')} function ds(d){return d.getFul
 function satClass(v){v=Number(v)||0;if(v>=80)return 'red';if(v>=50)return 'yellow';if(v>0)return 'green';return 'grey'}
 function satLabel(v){let c=satClass(v);return c==='green'?'🟢':c==='yellow'?'🟡':c==='red'?'🔴':'⚪'}
 function filterGiri(list){let ft=fTratta.value,fs=fStato.value,fa=fSat.value;return list.filter(g=>(!ft||g.tratta===ft)&&(!fs||g.stato===fs)&&(!fa||satClass(g.sat)===fa));}
-function render(){headers.innerHTML=['Lun','Mar','Mer','Gio','Ven','Sab','Dom'].map(x=>'<div class="head">'+x+'</div>').join('');monthTitle.textContent=new Date(y,m,1).toLocaleDateString('it-IT',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());
-let tratte=[...new Set(giri.map(g=>g.tratta).filter(Boolean))].sort();let old=fTratta.value;fTratta.innerHTML='<option value="">Tutte</option>'+tratte.map(t=>`<option ${t==old?'selected':''}>${t}</option>`).join('');
-let first=new Date(y,m,1),last=new Date(y,m+1,0),start=(first.getDay()+6)%7,cells=Math.ceil((start+last.getDate())/7)*7;grid.innerHTML='';
-(g=>{let c=satClass(g.sat);html+=`<div class="badge ${c}B" onclick="event.stopPropagation();openEdit('${g.id}')"><span>${satLabel(g.sat)}</span><span class="text">${g.tratta||'Giro'} ${g.zona||''}</span><span style="margin-left:auto">${g.sat||0}%</span></div>`});let el=document.createElement('div');el.className='cell '+(!cur?'other ':'')+(today?'today':'');el.innerHTML=html;el.onclick=()=>openDay(date);grid.appendChild(el)}updateStats();}
+function render(){
+headers.innerHTML=['Lun','Mar','Mer','Gio','Ven','Sab','Dom'].map(x=>'<div class="head">'+x+'</div>').join('');
+monthTitle.textContent=new Date(y,m,1).toLocaleDateString('it-IT',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());
+let tratte=[...new Set(giri.map(g=>g.tratta).filter(Boolean))].sort();
+let old=fTratta.value;
+fTratta.innerHTML='<option value="">Tutte</option>'+tratte.map(t=>`<option ${t==old?'selected':''}>${t}</option>`).join('');
+let first=new Date(y,m,1),last=new Date(y,m+1,0),start=(first.getDay()+6)%7,cells=Math.ceil((start+last.getDate())/7)*7;
+grid.innerHTML='';
+for(let i=0;i<cells;i++){
+let day=i-start+1,d=new Date(y,m,day),cur=d.getMonth()===m,date=ds(d),today=date===ds(new Date());
+let list=filterGiri(giri.filter(g=>g.data===date));
+let html=`<div class="daynum">${d.getDate()}</div>`;
+list.forEach(g=>{
+let c=satClass(g.sat);
+html+=`<div class="badge ${c}B" onclick="event.stopPropagation();openEdit('${g.id}')"><span>${satLabel(g.sat)}</span><span class="text">${g.tratta||'Giro'} ${g.zona||''}</span><span style="margin-left:auto">${g.sat||0}%</span></div>`;
+});
+let el=document.createElement('div');
+el.className='cell '+(!cur?'other ':'')+(today?'today':'');
+el.innerHTML=html;
+el.onclick=()=>openDay(date);
+grid.appendChild(el);
+}
+updateStats();
+}
 function updateStats(){let mm=giri.filter(g=>{let d=new Date(g.data);return d.getFullYear()===y&&d.getMonth()===m});sGiri.textContent=mm.length;sColli.textContent=mm.reduce((a,g)=>a+(+g.colli||0),0);sVol.textContent=mm.reduce((a,g)=>a+(+g.volume||0),0).toFixed(1);let withSat=mm.filter(g=>+g.sat>0);sSat.textContent=(withSat.length?Math.round(withSat.reduce((a,g)=>a+(+g.sat||0),0)/withSat.length):0)+'%';sDoc.textContent=mm.reduce((a,g)=>a+(g.docs?g.docs.length:0),0)}
 function changeMonth(n){m+=n;if(m>11){m=0;y++}if(m<0){m=11;y--}render()} function goToday(){let d=new Date();y=d.getFullYear();m=d.getMonth();render()}
 function openAdd(date=''){editing=null;tempDocs=[];editTitle.textContent='Nuovo giro';delBtn.style.display='none';['tratta','zona','autista','colli','volume','sat','ordini','clienti','note','linkBC'].forEach(id=>document.getElementById(id).value='');data.value=date||ds(new Date());stato.value='Programmato';mezzo.value='';renderDocs();editBg.classList.add('open')}
