@@ -23,7 +23,7 @@
 <div class="stats"><div class="stat"><div class="n" id="sGiri">0</div><div class="l">Giri mese</div></div><div class="stat"><div class="n" id="sColli">0</div><div class="l">Colli/consegne</div></div><div class="stat"><div class="n" id="sVol">0</div><div class="l">Volume m³</div></div><div class="stat"><div class="n" id="sSat">0%</div><div class="l">Saturazione media</div></div><div class="stat"><div class="n" id="sDoc">0</div><div class="l">PDF allegati</div></div></div>
 <div class="legend"><span class="leg"><span class="dot green"></span>Scarico</span><span class="leg"><span class="dot yellow"></span>Da completare</span><span class="leg"><span class="dot red"></span>Pieno</span><span class="leg"><span class="dot grey"></span>Senza saturazione</span></div>
 <div class="cal"><div class="headers" id="headers"></div><div class="grid" id="grid"></div></div>
-<div class="footerNote">Nota: i dati e i PDF vengono salvati nel browser di questo PC tramite memoria locale/IndexedDB. Per uso condiviso servirà pubblicarlo su server interno o SharePoint, ma la struttura resta questa.</div>
+<div class="footerNote">Nota: i dati sono condivisi tramite Firebase. I PDF allegati restano salvati nel documento del giro.</div>
 
 <div class="modalBg" id="editBg"><div class="modal"><h2 id="editTitle">Nuovo giro</h2><div class="formGrid">
 <div class="field"><label>Data giro</label><input type="date" id="data"></div>
@@ -40,10 +40,7 @@
 <div class="field full"><label>Ritiri fornitori</label><textarea id="ritiri" placeholder="Un fornitore per riga"></textarea></div>
 <div class="field full"><label>Note</label><textarea id="note" placeholder="Note logistiche, orario partenza, urgenze..."></textarea></div>
 <div class="field full"><label>PDF allegati</label><input type="file" id="pdfInput" accept="application/pdf" multiple><div class="docList" id="docList"></div></div>
-  <div class="field full">
-  <label>Link BC</label>
-  <input id="linkBC" placeholder="https://bc01.tecnotelai.it/..." />
-</div>
+<div class="field full"><label>Link BC</label><input id="linkBC" placeholder="https://bc01.tecnotelai.it/..." /></div>
 </div><div class="modalActions"><button class="btn danger" id="delBtn" onclick="deleteGiro()">Elimina</button><button class="btn" onclick="closeEdit()">Annulla</button><button class="btn primary" onclick="saveGiro()">Salva</button></div></div></div>
 <div class="modalBg" id="recBg"><div class="modal"><h2>Programma giro ricorrente</h2><div class="formGrid">
 <div class="field"><label>Tipo ricorrenza</label><select id="recTipo" onchange="toggleRecFields()"><option value="weekly">Settimanale</option><option value="monthlyNth">Mensile avanzata</option></select></div>
@@ -86,23 +83,43 @@ function pad(n){return String(n).padStart(2,'0')} function ds(d){return d.getFul
 function satClass(v){v=Number(v)||0;if(v>=80)return 'red';if(v>=50)return 'yellow';if(v>0)return 'green';return 'grey'}
 function satLabel(v){let c=satClass(v);return c==='green'?'🟢':c==='yellow'?'🟡':c==='red'?'🔴':'⚪'}
 function filterGiri(list){let ft=fTratta.value,fs=fStato.value,fa=fSat.value;return list.filter(g=>(!ft||g.tratta===ft)&&(!fs||g.stato===fs)&&(!fa||satClass(g.sat)===fa));}
-function render(){headers.innerHTML=['Lun','Mar','Mer','Gio','Ven','Sab','Dom'].map(x=>'<div class="head">'+x+'</div>').join('');monthTitle.textContent=new Date(y,m,1).toLocaleDateString('it-IT',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());
-let tratte=[...new Set(giri.map(g=>g.tratta).filter(Boolean))].sort();let old=fTratta.value;fTratta.innerHTML='<option value="">Tutte</option>'+tratte.map(t=>`<option ${t==old?'selected':''}>${t}</option>`).join('');
-let first=new Date(y,m,1),last=new Date(y,m+1,0),start=(first.getDay()+6)%7,cells=Math.ceil((start+last.getDate())/7)*7;grid.innerHTML='';
-for(let i=0;i<cells;i++){let day=i-start+1,d=new Date(y,m,day),date=ds(d),cur=d.getMonth()===m,today=ds(d)===ds(new Date());let list=filterGiri(giri.filter(g=>g.data===date));let html=`<div class="daynum">${d.getDate()}</div>`;list.slice(0,3).forEach(g=>{let c=satClass(g.sat);html+=`<div class="badge ${c}B" onclick="event.stopPropagation();openEdit('${g.id}')"><span>${satLabel(g.sat)}</span><span class="text">${g.tratta||'Giro'} ${g.zona||''}</span><span style="margin-left:auto">${g.sat||0}%</span></div>`});if(list.length>3)html+=`<div class="more">+${list.length-3} altri</div>`;let el=document.createElement('div');el.className='cell '+(!cur?'other ':'')+(today?'today':'');el.innerHTML=html;el.onclick=()=>openDay(date);grid.appendChild(el)}updateStats();}
+function render(){
+headers.innerHTML=['Lun','Mar','Mer','Gio','Ven','Sab','Dom'].map(x=>'<div class="head">'+x+'</div>').join('');
+monthTitle.textContent=new Date(y,m,1).toLocaleDateString('it-IT',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());
+let tratte=[...new Set(giri.map(g=>g.tratta).filter(Boolean))].sort();
+let old=fTratta.value;
+fTratta.innerHTML='<option value="">Tutte</option>'+tratte.map(t=>`<option ${t==old?'selected':''}>${t}</option>`).join('');
+let first=new Date(y,m,1),last=new Date(y,m+1,0),start=(first.getDay()+6)%7,cells=Math.ceil((start+last.getDate())/7)*7;
+grid.innerHTML='';
+for(let i=0;i<cells;i++){
+let day=i-start+1,d=new Date(y,m,day),cur=d.getMonth()===m,date=ds(d),today=date===ds(new Date());
+let list=filterGiri(giri.filter(g=>g.data===date));
+let html=`<div class="daynum">${d.getDate()}</div>`;
+list.forEach(g=>{
+let c=satClass(g.sat);
+html+=`<div class="badge ${c}B" onclick="event.stopPropagation();openEdit('${g.id}')"><span>${satLabel(g.sat)}</span><span class="text">${g.tratta||'Giro'} ${g.zona||''}</span><span style="margin-left:auto">${g.sat||0}%</span></div>`;
+});
+let el=document.createElement('div');
+el.className='cell '+(!cur?'other ':'')+(today?'today':'');
+el.innerHTML=html;
+el.onclick=()=>openDay(date);
+grid.appendChild(el);
+}
+updateStats();
+}
 function updateStats(){let mm=giri.filter(g=>{let d=new Date(g.data);return d.getFullYear()===y&&d.getMonth()===m});sGiri.textContent=mm.length;sColli.textContent=mm.reduce((a,g)=>a+(+g.colli||0),0);sVol.textContent=mm.reduce((a,g)=>a+(+g.volume||0),0).toFixed(1);let withSat=mm.filter(g=>+g.sat>0);sSat.textContent=(withSat.length?Math.round(withSat.reduce((a,g)=>a+(+g.sat||0),0)/withSat.length):0)+'%';sDoc.textContent=mm.reduce((a,g)=>a+(g.docs?g.docs.length:0),0)}
 function changeMonth(n){m+=n;if(m>11){m=0;y++}if(m<0){m=11;y--}render()} function goToday(){let d=new Date();y=d.getFullYear();m=d.getMonth();render()}
-function openAdd(date=''){editing=null;tempDocs=[];editTitle.textContent='Nuovo giro';delBtn.style.display='none';['tratta','zona','autista','colli','volume','sat','ordini','clienti','note','linkBC'].forEach(id=>document.getElementById(id).value='');data.value=date||ds(new Date());stato.value='Programmato';mezzo.value='';renderDocs();editBg.classList.add('open')}
-function openEdit(id){let g=giri.find(x=>x.id===id);if(!g)return;editing=id;tempDocs=[...(g.docs||[])];editTitle.textContent='Modifica giro';delBtn.style.display='inline-block';data.value=g.data||'';tratta.value=g.tratta||'';zona.value=g.zona||'';stato.value=g.stato||'Programmato';mezzo.value=g.mezzo||'';autista.value=g.autista||'';colli.value=g.colli||'';volume.value=g.volume||'';sat.value=g.sat||'';ordini.value=g.ordini||'';clienti.value=g.clienti||'';note.value=g.note||'';renderDocs();editBg.classList.add('open')}
+function openAdd(date=''){editing=null;tempDocs=[];editTitle.textContent='Nuovo giro';delBtn.style.display='none';['tratta','zona','autista','colli','volume','sat','ordini','clienti','ritiri','note','linkBC'].forEach(id=>document.getElementById(id).value='');data.value=date||ds(new Date());stato.value='Programmato';mezzo.value='';renderDocs();editBg.classList.add('open')}
+function openEdit(id){let g=giri.find(x=>x.id===id);if(!g)return;editing=id;tempDocs=[...(g.docs||[])];editTitle.textContent='Modifica giro';delBtn.style.display='inline-block';data.value=g.data||'';tratta.value=g.tratta||'';zona.value=g.zona||'';stato.value=g.stato||'Programmato';mezzo.value=g.mezzo||'';autista.value=g.autista||'';colli.value=g.colli||'';volume.value=g.volume||'';sat.value=g.sat||'';ordini.value=g.ordini||'';clienti.value=g.clienti||'';ritiri.value=g.ritiri||'';note.value=g.note||'';linkBC.value=g.linkBC||'';renderDocs();editBg.classList.add('open')}
 function closeEdit(){editBg.classList.remove('open');editing=null;tempDocs=[];pdfInput.value=''}
-async function saveGiro(){if(!data.value||!tratta.value.trim()){alert('Inserisci almeno Data giro e Tratta');return}let obj={data:data.value,tratta:tratta.value.trim(),zona:zona.value.trim(),stato:stato.value,mezzo:mezzo.value,autista:autista.value.trim(),colli:colli.value,volume:volume.value,sat:sat.value,ordini:ordini.value,clienti:clienti.value,note:note.value,docs:tempDocs,updatedAt:new Date().toISOString()};if(editing){await updateDoc(doc(db,'spedizioni_pro',editing),obj)}else{await addDoc(col,{...obj,createdAt:new Date().toISOString()})}closeEdit();render();if(selectedDay)openDay(selectedDay)}
+async function saveGiro(){if(!data.value||!tratta.value.trim()){alert('Inserisci almeno Data giro e Tratta');return}let obj={data:data.value,tratta:tratta.value.trim(),zona:zona.value.trim(),stato:stato.value,mezzo:mezzo.value,autista:autista.value.trim(),colli:colli.value,volume:volume.value,sat:sat.value,ordini:ordini.value,clienti:clienti.value,ritiri:ritiri.value,note:note.value,linkBC:linkBC.value,docs:tempDocs,updatedAt:new Date().toISOString()};if(editing){await updateDoc(doc(db,'spedizioni_pro',editing),obj)}else{await addDoc(col,{...obj,createdAt:new Date().toISOString()})}closeEdit();render();if(selectedDay)openDay(selectedDay)}
 async function deleteGiro(){if(confirm('Eliminare questo giro?')){await deleteDoc(doc(db,'spedizioni_pro',editing));closeEdit();render();if(selectedDay)openDay(selectedDay)}}
 pdfInput.onchange=async(e)=>{for(const f of e.target.files){let dataUrl=await fileToDataURL(f);tempDocs.push({name:f.name,data:dataUrl,ts:Date.now()})}renderDocs();pdfInput.value=''};
 function fileToDataURL(f){return new Promise((res,rej)=>{let r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)})}
 function renderDocs(){window.tempDocs=tempDocs;docList.innerHTML=tempDocs.length?tempDocs.map((d,i)=>`<div class="docRow"><span>📄 ${d.name}</span><span><button class="btn small" onclick="openDoc(${i})">Apri</button> <button class="btn small danger" onclick="removeTempDoc(${i})">X</button></span></div>`).join(''):'<div class="empty">Nessun PDF allegato</div>'}
 function removeTempDoc(i){tempDocs.splice(i,1);renderDocs()}
 function openDoc(i,docs=tempDocs){let d=docs[i];if(!d)return;let w=window.open();w.document.write(`<iframe src="${d.data}" style="border:0;width:100%;height:100vh"></iframe>`)}
-function openDay(date){selectedDay=date;let d=new Date(date);dayTitle.textContent=d.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());let list=filterGiri(giri.filter(g=>g.data===date));dayCards.innerHTML=list.length?list.map(g=>{let c=satClass(g.sat);let docs=(g.docs||[]).map((d,i)=>`<button class="btn small" onclick="openDoc(${i}, giri.find(x=>x.id==='${g.id}').docs)">📄 ${d.name}</button>`).join(' ');return `<div class="card"><div class="cardTop"><div class="cardTitle">${satLabel(g.sat)} ${g.tratta||''} ${g.zona||''}</div><span class="pill ${c}">${g.sat||0}%</span></div><div class="meta"><span>🚛 ${g.mezzo||'-'}</span><span>👨‍✈️ ${g.autista||'-'}</span><span>📦 ${g.colli||0}</span><span>📏 ${g.volume||0} m³</span><span>${g.stato}</span></div>${g.clienti?`<div style="margin-top:8px;white-space:pre-line">${g.clienti}</div>`:''}${g.ordini?`<div class="meta">Ordini: ${g.ordini}</div>`:''}${docs?`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${docs}</div>`:''}<div style="margin-top:10px"><button class="btn small primary" onclick="closeDay();openEdit('${g.id}')">Modifica</button></div></div>`}).join(''):'<div class="empty">Nessun giro programmato in questa data.</div>';dayBg.classList.add('open')}
+function openDay(date){selectedDay=date;let d=new Date(date);dayTitle.textContent=d.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());let list=filterGiri(giri.filter(g=>g.data===date));dayCards.innerHTML=list.length?list.map(g=>{let c=satClass(g.sat);let docs=(g.docs||[]).map((d,i)=>`<button class="btn small" onclick="openDoc(${i}, giri.find(x=>x.id==='${g.id}').docs)">📄 ${d.name}</button>`).join(' ');let bc=g.linkBC?`<a class="btn small" target="_blank" href="${g.linkBC}">🔗 Apri BC</a>`:'';return `<div class="card"><div class="cardTop"><div class="cardTitle">${satLabel(g.sat)} ${g.tratta||''} ${g.zona||''}</div><span class="pill ${c}">${g.sat||0}%</span></div><div class="meta"><span>🚛 ${g.mezzo||'-'}</span><span>👨‍✈️ ${g.autista||'-'}</span><span>📦 ${g.colli||0}</span><span>📏 ${g.volume||0} m³</span><span>${g.stato}</span></div>${g.clienti?`<div style="margin-top:8px;white-space:pre-line">${g.clienti}</div>`:''}${g.ritiri?`<div style="margin-top:8px;white-space:pre-line"><b>Ritiri fornitori:</b>\n${g.ritiri}</div>`:''}${g.ordini?`<div class="meta">Ordini: ${g.ordini}</div>`:''}${(docs||bc)?`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${docs} ${bc}</div>`:''}<div style="margin-top:10px"><button class="btn small primary" onclick="closeDay();openEdit('${g.id}')">Modifica</button></div></div>`}).join(''):'<div class="empty">Nessun giro programmato in questa data.</div>';dayBg.classList.add('open')}
 function closeDay(){dayBg.classList.remove('open');selectedDay=null} function addFromDay(){let d=selectedDay;closeDay();openAdd(d)}
 
 function openRecurrence(){
@@ -153,18 +170,16 @@ async function createRecurrence(){
   for (const date of dates){
     let exists=giri.some(g=>g.data===date && g.tratta===recTratta.value.trim() && g.zona===recZona.value.trim());
     if(exists){saltati++; continue}
-    await addDoc(col,{data:date,tratta:recTratta.value.trim(),zona:recZona.value.trim(),stato:recStato.value,mezzo:recMezzo.value,autista:recAutista.value.trim(),colli:recColli.value,volume:recVolume.value,sat:recSat.value,ordini:'',clienti:'',note:recNote.value,docs:[],series:series,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
+    await addDoc(col,{data:date,tratta:recTratta.value.trim(),zona:recZona.value.trim(),stato:recStato.value,mezzo:recMezzo.value,autista:recAutista.value.trim(),colli:recColli.value,volume:recVolume.value,sat:recSat.value,ordini:'',clienti:'',ritiri:'',note:recNote.value,linkBC:'',docs:[],series:series,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
     creati++;
   }
   closeRecurrence(); render(); alert('Creati '+creati+' giri. Duplicati saltati: '+saltati);
 }
 
-function exportCSV(){let rows=['Data;Tratta;Zona;Stato;Mezzo;Autista;Colli;VolumeMC;Saturazione;Ordini;Clienti;Note;PDF'];giri.forEach(g=>rows.push([g.data,g.tratta,g.zona,g.stato,g.mezzo,g.autista,g.colli,g.volume,g.sat,g.ordini,(g.clienti||'').replace(/\n/g,' | '),(g.note||'').replace(/\n/g,' | '),(g.docs||[]).map(d=>d.name).join(' | ')].map(x=>'"'+String(x||'').replace(/"/g,'""')+'"').join(';')));let a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));a.download='giri_spedizioni.csv';a.click()}
+function exportCSV(){let rows=['Data;Tratta;Zona;Stato;Mezzo;Autista;Colli;VolumeMC;Saturazione;Ordini;Clienti;Ritiri;Note;LinkBC;PDF'];giri.forEach(g=>rows.push([g.data,g.tratta,g.zona,g.stato,g.mezzo,g.autista,g.colli,g.volume,g.sat,g.ordini,(g.clienti||'').replace(/\n/g,' | '),(g.ritiri||'').replace(/\n/g,' | '),(g.note||'').replace(/\n/g,' | '),g.linkBC,(g.docs||[]).map(d=>d.name).join(' | ')].map(x=>'"'+String(x||'').replace(/"/g,'""')+'"').join(';')));let a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));a.download='giri_spedizioni.csv';a.click()}
 
-// Rende disponibili le funzioni ai pulsanti HTML anche se lo script è type=module
 Object.assign(window,{exportCSV,openRecurrence,openAdd,changeMonth,goToday,render,openEdit,openDay,deleteGiro,closeEdit,saveGiro,closeRecurrence,createRecurrence,toggleRecFields,addFromDay,closeDay,openDoc,removeTempDoc});
 
-// Lettura in tempo reale da Firebase Firestore
 onSnapshot(query(col), snap => {
   giri = snap.docs.map(d => ({id:d.id, ...d.data()}));
   render();
