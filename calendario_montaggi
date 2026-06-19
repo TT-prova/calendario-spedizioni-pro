@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Calendario Montaggi</title>
+<style>
+body{
+font-family:Arial,sans-serif;
+background:#f5f5f5;
+padding:30px;
+}
+h1{
+color:#003366;
+}
+.box{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 2px 5px rgba(0,0,0,0.2);
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h1>🔧 Calendario Montaggi</h1>
+
+<p>Pagina in costruzione.</p>
+
+<p>Qui verranno gestiti:</p>
+
+<ul>
+<li>Cliente</li>
+<li>Data montaggio</li>
+<li>Squadra</li>
+<li>Referente</li>
+<li>Sicurezza</li>
+<li>Istruzioni di montaggio</li>
+<li>Note</li>
+<li>Stato avanzamento</li>
+</ul>
+
+</div>
+
+</body>
+</html>
