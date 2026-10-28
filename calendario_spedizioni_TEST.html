@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Calendario Spedizioni PRO</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--line:#e4e7eb;--txt:#1d2733;--muted:#6b7280;--brand:#7b1f7a;--brand2:#004b67;--green:#149447;--yellow:#c98900;--red:#ce3333;--blue:#1565c0;}
+*{box-sizing:border-box} body{margin:0;font-family:Segoe UI,system-ui,Arial,sans-serif;background:var(--bg);color:var(--txt)}
+.top{height:64px;background:linear-gradient(90deg,#161616,#263746);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 22px;box-shadow:0 2px 8px #0002}.top h1{font-size:20px;margin:0;font-weight:650}.top .actions{display:flex;gap:8px}
+.btn{border:1px solid var(--line);background:#fff;color:var(--txt);border-radius:8px;padding:8px 12px;cursor:pointer;font-weight:600}.btn:hover{filter:brightness(.97)}.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}.btn.danger{color:#b42318;border-color:#f4b5ad}.btn.dark{background:#263746;color:#fff;border-color:#263746}.btn.small{padding:5px 8px;font-size:12px}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:14px 18px;background:#fff;border-bottom:1px solid var(--line)} select,input,textarea{border:1px solid #cfd6dd;border-radius:8px;padding:8px 10px;font:inherit;background:#fff} textarea{min-height:80px;resize:vertical}.monthTitle{min-width:210px;text-align:center;font-size:19px;font-weight:700}.spacer{flex:1}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:14px 18px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 1px 5px #0000000d}.stat .n{font-size:24px;font-weight:800}.stat .l{font-size:12px;color:var(--muted);margin-top:3px}.legend{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:0 18px 12px}.leg{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}.dot{width:10px;height:10px;border-radius:50%;display:inline-block}.green{background:var(--green)}.yellow{background:var(--yellow)}.red{background:var(--red)}.grey{background:#7b8794}
+.cal{margin:0 18px 18px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 2px 10px #00000010}.headers,.grid{display:grid;grid-template-columns:repeat(7,1fr)}.head{padding:11px;text-align:center;font-weight:700;color:#56616d;background:#f8fafc;border-right:1px solid var(--line)}.head:last-child{border-right:0}.cell{min-height:122px;border-top:1px solid var(--line);border-right:1px solid var(--line);padding:8px;background:#fff;cursor:pointer}.cell:nth-child(7n){border-right:0}.cell:hover{background:#fbfcfe}.cell.other{background:#f7f8fa;color:#a0a8b2}.cell.today{background:#f0f7ff}.daynum{font-weight:700;font-size:13px;margin-bottom:6px;color:#374151}.badge{display:flex;align-items:center;gap:5px;margin:4px 0;padding:5px 7px;border-radius:9px;font-size:12px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.badge .text{overflow:hidden;text-overflow:ellipsis}.badge.greenB{background:#e8f7ee;color:#0b6932}.badge.yellowB{background:#fff6df;color:#7a4d00}.badge.redB{background:#fdecec;color:#9b1c1c}.badge.greyB{background:#eef2f6;color:#475569}.more{font-size:12px;color:var(--blue);font-weight:600;margin-top:3px}
+.modalBg{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;z-index:30}.modalBg.open{display:flex}.modal{width:720px;max-width:96vw;max-height:92vh;overflow:auto;background:#fff;border-radius:18px;padding:22px;box-shadow:0 18px 60px #0005}.modal h2{margin:0 0 14px}.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;font-size:12px;font-weight:700;color:#53606d;margin:4px 0}.field.full{grid-column:1/-1}.modalActions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}.docList{display:flex;flex-direction:column;gap:8px;margin-top:8px}.docRow{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:8px;background:#fafafa}.cards{display:flex;flex-direction:column;gap:10px}.card{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}.cardTop{display:flex;align-items:center;justify-content:space-between;gap:8px}.cardTitle{font-weight:800}.pill{font-size:12px;border-radius:999px;padding:3px 8px;font-weight:800}.pill.green{background:#e8f7ee;color:#0b6932}.pill.yellow{background:#fff6df;color:#7a4d00}.pill.red{background:#fdecec;color:#9b1c1c}.meta{display:flex;gap:12px;flex-wrap:wrap;color:#64748b;font-size:13px;margin-top:6px}.empty{color:#7b8794;padding:12px}.footerNote{padding:0 18px 16px;color:#667085;font-size:12px}
+@media(max-width:900px){.stats{grid-template-columns:1fr 1fr}.cell{min-height:100px}.formGrid{grid-template-columns:1fr}.top{height:auto;gap:10px;align-items:flex-start;flex-direction:column;padding:14px}.monthTitle{text-align:left}}
+@media print{.top,.toolbar,.stats,.legend,.footerNote{display:none}.cal{margin:0;border-radius:0;box-shadow:none}.cell{min-height:95px}}
+.importHint{font-size:12px;color:#667085;margin-top:6px}.importOk{font-size:12px;color:#137333;font-weight:700;margin-top:6px}
+</style>
+<style>
+.modernPickOverlay{position:fixed;inset:0;background:rgba(8,20,36,.68);z-index:99999;display:flex;align-items:center;justify-content:center;padding:14px}.modernPick{width:min(1560px,98vw);max-height:94vh;background:#fff;border-radius:14px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 80px #0006;color:#1c3045;font:13px Arial,sans-serif}.mpHead{background:#07538d;color:white;padding:16px 22px;display:flex;justify-content:space-between;align-items:center}.mpHead h2{margin:0;font-size:21px;color:white}.mpHead p{margin:6px 0 0;color:#e6f2ff}.mpClose{background:transparent;border:0;color:white;font-size:24px;cursor:pointer}.mpControls{display:flex;align-items:end;gap:14px;padding:14px 18px;background:#f7fafc;border-bottom:1px solid #dce5ee}.mpControls label{display:flex;flex-direction:column;gap:5px;font-weight:700;min-width:200px}.mpControls select,.mpControls input{border:1px solid #cbd6e2;border-radius:6px;padding:10px;background:white}.mpControls label:nth-child(2){flex:1}.mpGiro{font-size:12px;line-height:1.6;color:#506075}.mpContent{display:grid;grid-template-columns:minmax(0,1fr) 245px;min-height:0;flex:1}.mpLeft{display:flex;flex-direction:column;min-width:0;min-height:0}.mpToolbar{display:flex;align-items:center;gap:8px;padding:12px;flex-wrap:wrap}.mpToolbar span{margin-left:auto;color:#53647a}.mpBtn{padding:10px 14px;border:1px solid #c6d2df;border-radius:6px;background:white;color:#233b56;cursor:pointer;font-weight:700}.mpBtn:hover{background:#edf4fa}.mpBlue{background:#146bd1;color:white;border-color:#146bd1}.mpBlue:hover{background:#0758b4}.mpTableWrap{overflow:auto;min-height:100px;flex:1}.mpTable{border-collapse:collapse;width:100%;font-size:11px;white-space:nowrap}.mpTable th{background:#073e69;color:white;position:sticky;top:0;padding:10px 8px;text-align:left;z-index:1}.mpTable td{padding:8px;border-bottom:1px solid #e5ebf1;max-width:190px;overflow:hidden;text-overflow:ellipsis}.mpTable tr:nth-child(even){background:#f4f8fc}.mpTable tr:hover{background:#e7f2ff}.mpTable tr[hidden]{display:none}.mpTable input{accent-color:#146bd1}.mpSide{background:#f7fafc;border-left:1px solid #e1e8f0;padding:14px}.mpPanel{background:#eaf4ff;border:1px solid #d1e7fa;border-radius:10px;padding:15px}.mpPanel small{color:#516d89;font-weight:700}.mpPanel h2{font-size:22px;margin:8px 0 18px;color:#14385e}.mpMetric{display:flex;justify-content:space-between;gap:8px;border-top:1px solid #cbddec;padding:11px 0}.mpMetric strong{color:#0757a2}.mpNote{font-size:12px;color:#66798b;line-height:1.5}.mpFoot{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-top:1px solid #dce5ee;gap:10px}.mpFoot>div{display:flex;gap:8px}@media(max-width:900px){.mpContent{grid-template-columns:1fr}.mpSide{display:none}.mpControls{flex-wrap:wrap}.modernPick{max-height:95vh}}
+</style>
+<style>
+.authBar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;padding:10px 18px;background:#edf4fb;border-bottom:1px solid #c9d9e8}.authBar .btn{font-size:12px}.authBar strong{color:#194b72}.authDialog{position:fixed;inset:0;background:#0008;z-index:100000;display:none;align-items:center;justify-content:center;padding:16px}.authDialog.open{display:flex}.authPanel{background:#fff;border-radius:12px;padding:25px;width:min(420px,96vw);box-shadow:0 12px 40px #0005}.authPanel label{display:block;margin-top:12px;font-weight:600}.authPanel input{display:block;width:100%;box-sizing:border-box;padding:11px;margin-top:5px;border:1px solid #aab9c7;border-radius:6px}.authPanel .buttons{display:flex;gap:10px;margin-top:18px}.authPanel .error{color:#a21c1c;min-height:20px;margin-top:10px}.readonlyNotice{color:#5a6d80;font-size:12px}
+</style></head>
+<body>
+<div class="top"><h1>Calendario Spedizioni PRO</h1><div class="actions"><button class="btn" onclick="exportCSV()">↓ CSV</button><button class="btn" onclick="window.print()">🖨 Stampa</button><button class="btn primary" onclick="document.getElementById('excelTestInput').click()" data-editor-only style="display:none">📊 Importa Excel</button></div></div>
+<div class="authBar"><strong id="authStatus">Sola lettura · accesso non effettuato</strong><span class="readonlyNotice">Per modificare i giri è necessario l’accesso autorizzato.</span><button class="btn primary" id="loginButton" onclick="showLogin()">🔐 Accedi per modificare</button><button class="btn" id="logoutButton" style="display:none" onclick="logoutOperator()">Esci</button></div>
+<div class="authDialog" id="authDialog"><div class="authPanel"><h2>Accesso operatori</h2><p>Riservato a Peluso e Fogli. Gli altri colleghi possono consultare il calendario.</p><form id="authForm"><label>Email aziendale<input type="email" id="authEmail" autocomplete="username" required></label><label>Password Firebase<input type="password" id="authPassword" autocomplete="current-password" required></label><div id="authError" class="error" role="alert"></div><div class="buttons"><button class="btn primary" type="submit">Accedi</button><button class="btn" type="button" onclick="hideLogin()">Annulla</button></div></form></div></div>
+<div class="toolbar"><button class="btn" onclick="changeMonth(-1)">← Prec</button><div class="monthTitle" id="monthTitle"></div><button class="btn" onclick="changeMonth(1)">Succ →</button><button class="btn" onclick="goToday()">Oggi</button><span class="spacer"></span><label>Tratta</label><select id="fTratta" onchange="render()"><option value="">Tutte</option></select><label>Stato</label><select id="fStato" onchange="render()"><option value="">Tutti</option><option>Programmato</option><option>In corso</option><option>Completato</option><option>Annullato</option></select><label>Saturazione</label><select id="fSat" onchange="render()"><option value="">Tutte</option><option value="green">🟢 Pieno ≥80%</option><option value="yellow">🟡 Medio 50-79%</option><option value="red">🔴 Scarico <50%</option></select></div>
+<div class="stats"><div class="stat"><div class="n" id="sGiri">0</div><div class="l">Giri mese</div></div><div class="stat"><div class="n" id="sColli">0</div><div class="l">Colli/consegne</div></div><div class="stat"><div class="n" id="sVol">0</div><div class="l">Volume m³</div></div><div class="stat"><div class="n" id="sSat">0%</div><div class="l">Saturazione media</div></div></div>
+<div class="legend"><span class="leg"><span class="dot green"></span>Scarico</span><span class="leg"><span class="dot yellow"></span>Da completare</span><span class="leg"><span class="dot red"></span>Pieno</span><span class="leg"><span class="dot grey"></span>Senza saturazione</span></div>
+<div class="cal"><div class="headers" id="headers"></div><div class="grid" id="grid"></div></div>
+<div class="footerNote" style="color:#667085">Calendario operativo · I giri storici e gli eventuali allegati già salvati restano nel database. Modifiche riservate agli operatori autorizzati.</div>
+<input type="file" id="excelTestInput" accept=".xlsx,.xls" style="display:none">
+<div class="modalBg" id="importBg"><div class="modal" style="width:1150px"><h2>Anteprima importazione ordini</h2><div id="importSummary" class="empty">Seleziona un file Excel.</div><div id="importMatches" style="margin:10px 0"></div><div style="overflow:auto;max-height:48vh"><table id="importTable" style="width:100%;border-collapse:collapse;font-size:12px"></table></div><div class="modalActions"><button class="btn" onclick="closeImportTest()">Chiudi</button></div></div></div>
+
+<div class="modalBg" id="editBg"><div class="modal"><h2 id="editTitle">Nuovo giro</h2><div class="formGrid">
+<div class="field"><label>Data giro</label><input type="date" id="data"></div>
+<div class="field"><label>Tratta</label><input list="tratte" id="tratta" placeholder="V1, E5, L1..."><datalist id="tratte"><option>V1</option><option>V2</option><option>E1</option><option>E5</option><option>L1</option><option>T3</option><option>R1</option><option>PUG</option></datalist></div>
+<div class="field"><label>Zona / Destinazione</label><input id="zona" placeholder="Veneto, Emilia, Lombardia..."></div>
+<div class="field"><label>Stato</label><select id="stato"><option>Programmato</option><option>Da preparare</option><option>Preparato</option><option>In carico</option><option>Caricato</option><option>Spedito</option><option>Consegnato</option><option>Completato</option><option>Annullato</option></select></div>
+<div class="field"><label>Mezzo / camion</label><select id="mezzo"><option value="">Seleziona</option><option>7,5 m - 20/21 m³</option><option>8,5 m - 21/23 m³</option><option>9,0 m - oltre 24 m³</option></select></div>
+<div class="field"><label>Autista</label><input id="autista" placeholder="Remo, Gamberini..."></div>
+<div class="field"><label>Colli / consegne</label><input type="number" id="colli" min="0"></div>
+<div class="field"><label>Volume m³</label><input type="number" id="volume" min="0" step="0.1"></div>
+<div class="field"><label>Saturazione % (automatica · 22 m³)</label><input type="number" id="sat" min="0" max="999" step="0.1" readonly title="Volume / 22 × 100"></div>
+<div class="field"><label>Ordini collegati</label><div style="display:flex;gap:6px;align-items:center"><input id="ordini" placeholder="OVI26-06111, OVI26-06288..." style="flex:1"><button type="button" class="btn" onclick="document.getElementById('giroExcelInput').click()">📥 Importa</button></div><div id="giroImportMsg" class="importHint">Carica il foglio TRATTA del tuo Cruscotto spedizioni, seleziona gli ordini e verifica prima di salvare.</div><input type="file" id="giroExcelInput" accept=".xlsx,.xls" style="display:none"></div>
+<div class="field full"><label>Codici clienti (Excel)</label><textarea id="codiciClienti" placeholder="Codici cliente, uno per riga"></textarea></div>
+<div class="field full"><label>Spedizioni Warehouse (Excel)</label><textarea id="spedizioniWh" placeholder="Numeri spedizione WH, uno per riga"></textarea></div>
+<div class="field full"><label>Ragione sociale Ord (Excel)</label><textarea id="ragSocialeOrd" placeholder="Ragioni sociali ordine, una per riga"></textarea></div>
+<div class="field full"><label>Clienti/Fermate</label><textarea id="clienti" placeholder="Un cliente per riga"></textarea></div>
+<div class="field full"><label>Ritiri fornitori</label><textarea id="ritiri" placeholder="Un fornitore per riga"></textarea></div>
+<div class="field full"><label>Note</label><textarea id="note" placeholder="Note logistiche, orario partenza, urgenze..."></textarea></div>
+
+<div class="field full"><label>Link Optima</label><div style="display:flex;gap:8px;align-items:center"><input id="linkOptima" placeholder="Incolla qui il link copiato da Optima" style="flex:1" /><button type="button" class="btn" onclick="openOptimaFromForm()">Apri Optima</button></div></div>
+
+</div><div class="modalActions"><button class="btn danger" id="delBtn" onclick="deleteGiro()">Elimina</button><button class="btn" onclick="closeEdit()">Annulla</button><button class="btn primary" onclick="saveGiro()">Salva</button></div></div></div>
+<div class="modalBg" id="dayBg"><div class="modal"><h2 id="dayTitle"></h2><div class="cards" id="dayCards"></div><div class="modalActions"><button class="btn primary" onclick="addFromDay()" data-editor-only style="display:none">+ Aggiungi giro</button><button class="btn" onclick="closeDay()">Chiudi</button></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBNgpYA2d7HToJppcZ6yLDLSt3A75c9Ogk",
+  authDomain: "calendario-spedizioni.firebaseapp.com",
+  projectId: "calendario-spedizioni",
+  storageBucket: "calendario-spedizioni.firebasestorage.app",
+  messagingSenderId: "214380369240",
+  appId: "1:214380369240:web:85551d1aa272d9f736412d"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+// Compilare con i due UID visualizzati in Firebase Authentication > Utenti.
+// NON inserire password qui. I controlli nel browser non sostituiscono le regole Firestore.
+const AUTHORIZED_UIDS = [
+  "xQn7eUhPswP8zAma0yNetwqI8Nk2",
+  "qBblaklA9ONbYLMphiiyTsuBAxo2"
+];
+let canEdit = false;
+function requireEditor(){if(canEdit)return true;alert('Sola lettura: accedi con un account autorizzato per modificare i giri.');return false}
+function showLogin(){document.getElementById('authError').textContent='';document.getElementById('authDialog').classList.add('open')}
+function hideLogin(){document.getElementById('authDialog').classList.remove('open');document.getElementById('authPassword').value=''}
+async function logoutOperator(){await signOut(auth)}
+document.getElementById('authForm').addEventListener('submit',async e=>{
+ e.preventDefault();document.getElementById('authError').textContent='';
+ try{await signInWithEmailAndPassword(auth,document.getElementById('authEmail').value.trim(),document.getElementById('authPassword').value);hideLogin()}
+ catch(e){document.getElementById('authError').textContent='Accesso non riuscito. Verifica le credenziali.'}
+});
+onAuthStateChanged(auth,user=>{
+ canEdit=!!user && AUTHORIZED_UIDS.includes(user.uid);
+ document.getElementById('authStatus').textContent=canEdit?'Operatore autorizzato · '+user.email:(user?'Account non autorizzato · sola lettura':'Sola lettura · accesso non effettuato');
+ document.getElementById('loginButton').style.display=canEdit?'none':'';
+ document.getElementById('logoutButton').style.display=user?'':'none';
+ document.querySelectorAll('[data-editor-only]').forEach(el=>el.style.display=canEdit?'':'none');
+ render();
+});
+const CALENDAR_COLLECTION = "spedizioni_pro_TEST_verifica";
+const col = collection(db, CALENDAR_COLLECTION);
+
+let giri=[];let now=new Date(), y=now.getFullYear(), m=now.getMonth(), editing=null, selectedDay=null;
+function saveLocal(){}
+function pad(n){return String(n).padStart(2,'0')} function ds(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function satClass(v){v=Number(v)||0;if(v>=80)return 'red';if(v>=50)return 'yellow';if(v>0)return 'green';return 'grey'}
+function satLabel(v){let c=satClass(v);return c==='green'?'🟢':c==='yellow'?'🟡':c==='red'?'🔴':'⚪'}
+function filterGiri(list){let ft=fTratta.value,fs=fStato.value,fa=fSat.value;return list.filter(g=>(!ft||g.tratta===ft)&&(!fs||g.stato===fs)&&(!fa||satClass(g.sat)===fa));}
+function render(){
+headers.innerHTML=['Lun','Mar','Mer','Gio','Ven','Sab','Dom'].map(x=>'<div class="head">'+x+'</div>').join('');
+monthTitle.textContent=new Date(y,m,1).toLocaleDateString('it-IT',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());
+let tratte=[...new Set(giri.map(g=>g.tratta).filter(Boolean))].sort();
+let old=fTratta.value;
+fTratta.innerHTML='<option value="">Tutte</option>'+tratte.map(t=>`<option ${t==old?'selected':''}>${t}</option>`).join('');
+let first=new Date(y,m,1),last=new Date(y,m+1,0),start=(first.getDay()+6)%7,cells=Math.ceil((start+last.getDate())/7)*7;
+grid.innerHTML='';
+for(let i=0;i<cells;i++){
+let day=i-start+1,d=new Date(y,m,day),cur=d.getMonth()===m,date=ds(d),today=date===ds(new Date());
+let list=filterGiri(giri.filter(g=>g.data===date));
+let html=`<div class="daynum">${d.getDate()}</div>`;
+list.forEach(g=>{
+let c=satClass(g.sat);
+html+=`<div class="badge ${c}B" onclick="event.stopPropagation();openEdit('${g.id}')"><span>${satLabel(g.sat)}</span><span class="text">${g.tratta||'Giro'} ${g.zona||''}</span><span style="margin-left:auto">${g.sat||0}%</span></div>`;
+});
+let el=document.createElement('div');
+el.className='cell '+(!cur?'other ':'')+(today?'today':'');
+el.innerHTML=html;
+el.onclick=()=>openDay(date);
+grid.appendChild(el);
+}
+updateStats();
+}
+function updateStats(){let mm=giri.filter(g=>{let d=new Date(g.data);return d.getFullYear()===y&&d.getMonth()===m});sGiri.textContent=mm.length;sColli.textContent=mm.reduce((a,g)=>a+(+g.colli||0),0);sVol.textContent=mm.reduce((a,g)=>a+(+g.volume||0),0).toFixed(1);let withSat=mm.filter(g=>+g.sat>0);sSat.textContent=(withSat.length?Math.round(withSat.reduce((a,g)=>a+(+g.sat||0),0)/withSat.length):0)+'%';}
+function changeMonth(n){m+=n;if(m>11){m=0;y++}if(m<0){m=11;y--}render()} function goToday(){let d=new Date();y=d.getFullYear();m=d.getMonth();render()}
+// Capacità standard provvisoria: 22 metri cubi per camion.
+const CAPACITA_CAMION_M3 = 22;
+function aggiornaSaturazione(volId, satId){
+ const campoVolume=document.getElementById(volId), campoSat=document.getElementById(satId);
+ const raw=String(campoVolume.value||'').trim().replace(',', '.');
+ const n=Number(raw);
+ campoSat.value=raw!=='' && Number.isFinite(n) && n>=0 ? (n/CAPACITA_CAMION_M3*100).toFixed(1) : '';
+}
+document.getElementById('volume').addEventListener('input',()=>aggiornaSaturazione('volume','sat'));
+function openAdd(date=''){if(!requireEditor())return;editing=null;if(document.getElementById('giroImportMsg'))giroImportMsg.textContent='Carica il foglio TRATTA del tuo Cruscotto spedizioni, seleziona gli ordini e verifica prima di salvare.';editTitle.textContent='Nuovo giro';delBtn.style.display='none';['tratta','zona','autista','colli','volume','sat','ordini','clienti','ritiri','note','linkOptima','codiciClienti','spedizioniWh','ragSocialeOrd'].forEach(id=>document.getElementById(id).value='');data.value=date||ds(new Date());stato.value='Programmato';mezzo.value='';if(String(volume.value).trim()!=='')aggiornaSaturazione('volume','sat');editBg.classList.add('open')}
+function openEdit(id){if(!canEdit){openReadOnlyGiro(id);return}if(document.getElementById('giroImportMsg'))giroImportMsg.textContent='Carica il foglio TRATTA del tuo Cruscotto spedizioni, seleziona gli ordini e verifica prima di salvare.';let g=giri.find(x=>x.id===id);if(!g)return;editing=id;editTitle.textContent='Modifica giro';delBtn.style.display='inline-block';data.value=g.data||'';tratta.value=g.tratta||'';zona.value=g.zona||'';stato.value=g.stato||'Programmato';mezzo.value=g.mezzo||'';autista.value=g.autista||'';colli.value=g.colli||'';volume.value=g.volume||'';sat.value=g.sat||'';ordini.value=g.ordini||'';clienti.value=g.clienti||'';codiciClienti.value=g.codiciClienti||'';spedizioniWh.value=g.spedizioniWh||'';ragSocialeOrd.value=g.ragSocialeOrd||'';ritiri.value=g.ritiri||'';note.value=g.note||'';linkOptima.value=g.linkOptima||g.linkBC||'';if(String(volume.value).trim()!=='')aggiornaSaturazione('volume','sat');editBg.classList.add('open')}
+function closeEdit(){editBg.classList.remove('open');editing=null;}
+async function saveGiro(){if(!requireEditor())return;
+ if(!data.value||!tratta.value.trim()){alert('Inserisci almeno Data giro e Tratta');return}
+ if(String(volume.value).trim()!=='')aggiornaSaturazione('volume','sat');
+ const obj={data:data.value,tratta:tratta.value.trim(),zona:zona.value.trim(),stato:stato.value,mezzo:mezzo.value,autista:autista.value.trim(),colli:colli.value,volume:volume.value,sat:sat.value,ordini:ordini.value,clienti:clienti.value,codiciClienti:codiciClienti.value,spedizioniWh:spedizioniWh.value,ragSocialeOrd:ragSocialeOrd.value,ritiri:ritiri.value,note:note.value,linkOptima:normalizeUrl(linkOptima.value),updatedAt:new Date().toISOString()};
+ try{if(editing){await updateDoc(doc(db,CALENDAR_COLLECTION,editing),obj)}else{await addDoc(col,{...obj,createdAt:new Date().toISOString()})}closeEdit();render();if(selectedDay)openDay(selectedDay);alert('Giro salvato.')}catch(err){console.error(err);alert('Salvataggio non riuscito: '+err.message)}}
+async function deleteGiro(){if(!requireEditor())return;if(!editing||!confirm('Eliminare definitivamente questo giro operativo?'))return;try{await deleteDoc(doc(db,CALENDAR_COLLECTION,editing));closeEdit();render();if(selectedDay)openDay(selectedDay)}catch(err){console.error(err);alert('Eliminazione non riuscita: '+err.message)}}
+function normalizeUrl(value){let url=(value||'').trim();if(!url)return'';if(!/^[a-z][a-z0-9+.-]*:\/\//i.test(url))url='https://'+url;return url}
+function openExternalUrl(value,label='collegamento'){let url=normalizeUrl(value);if(!url){alert('Incolla prima il '+label);return}try{new URL(url)}catch(e){alert('Il link non è valido. Copialo nuovamente dalla barra degli indirizzi.');return}window.open(url,'_blank','noopener,noreferrer')}
+function openOptimaFromForm(){openExternalUrl(linkOptima.value,'link Optima')}
+function openReadOnlyGiro(id){const g=giri.find(x=>x.id===id);if(g)openDay(g.data)}
+function openDay(date){selectedDay=date;let d=new Date(date);dayTitle.textContent=d.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());let list=filterGiri(giri.filter(g=>g.data===date));dayCards.innerHTML=list.length?list.map(g=>{let c=satClass(g.sat);let docs="";let optima=g.linkOptima||g.linkBC;let optimaBtn=optima?`<button class="btn small" onclick="openExternalUrl(${JSON.stringify(optima)},'link Optima')">🚚 Apri Optima</button>`:'';let excel='';return `<div class="card"><div class="cardTop"><div class="cardTitle">${satLabel(g.sat)} ${g.tratta||''} ${g.zona||''}</div><span class="pill ${c}">${g.sat||0}%</span></div><div class="meta"><span>🚛 ${g.mezzo||'-'}</span><span>👨‍✈️ ${g.autista||'-'}</span><span>📦 ${g.colli||0}</span><span>📏 ${g.volume||0} m³</span><span>${g.stato}</span></div>${g.clienti?`<div style="margin-top:8px;white-space:pre-line">${g.clienti}</div>`:''}${g.ritiri?`<div style="margin-top:8px;white-space:pre-line"><b>Ritiri fornitori:</b>\n${g.ritiri}</div>`:''}${g.ordini?`<div class="meta">Ordini: ${g.ordini}</div>`:''}${(docs||optimaBtn||excel)?`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${docs} ${optimaBtn} ${excel}</div>`:''}<div style="margin-top:10px">${canEdit?`<button class="btn small primary" onclick="closeDay();openEdit('${g.id}')">Modifica</button>`:""}</div></div>`}).join(''):'<div class="empty">Nessun giro programmato in questa data.</div>';dayBg.classList.add('open')}
+function closeDay(){dayBg.classList.remove('open');selectedDay=null} function addFromDay(){if(!requireEditor())return;let d=selectedDay;closeDay();openAdd(d)}
+
+function exportCSV(){let rows=['Data;Tratta;Zona;Stato;Mezzo;Autista;Colli;VolumeMC;Saturazione;Ordini;Clienti;Ritiri;Note;LinkOptima'];giri.forEach(g=>rows.push([g.data,g.tratta,g.zona,g.stato,g.mezzo,g.autista,g.colli,g.volume,g.sat,g.ordini,(g.clienti||'').replace(/\n/g,' | '),(g.ritiri||'').replace(/\n/g,' | '),(g.note||'').replace(/\n/g,' | '),g.linkOptima||g.linkBC].map(x=>'"'+String(x||'').replace(/"/g,'""')+'"').join(';')));let a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));a.download='giri_spedizioni.csv';a.click()}
+
+
+// ===== IMPORT EXCEL: anteprima senza scrittura immediata =====
+function excelDateToISO(v){
+  if(v===null||v===undefined||v==='') return '';
+  if(typeof v==='number'){
+    const d=XLSX.SSF.parse_date_code(v);
+    if(!d) return '';
+    return `${d.y}-${pad(d.m)}-${pad(d.d)}`;
+  }
+  const s=String(v).trim();
+  const m=s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+  if(m){let yy=m[3].length===2?'20'+m[3]:m[3];return `${yy}-${pad(m[2])}-${pad(m[1])}`;}
+  const d=new Date(s); return isNaN(d)?s:ds(d);
+}
+function cleanOrder(v){return String(v||'').split(';').map(x=>x.trim()).filter(Boolean).join(', ')}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function closeImportTest(){document.getElementById('importBg').classList.remove('open')}
+
+function previewLinkTest(data,tratta){
+  const rows=(window.__importMapped||[]).filter(r=>r.data===data && r.tratta===tratta);
+  const giro=giri.find(g=>g.data===data && String(g.tratta||'').trim()===tratta);
+  if(!giro){alert('Giro non trovato.');return}
+  const orders=[...new Set(rows.flatMap(r=>r.ordine.split(',').map(x=>x.trim())).filter(Boolean))];
+  const clients=[...new Set(rows.map(r=>r.cliente).filter(Boolean))];
+  alert(
+    'SIMULAZIONE — NESSUN SALVATAGGIO\n\n'+
+    'Giro: '+data+' — '+tratta+'\n\n'+
+    'Ordini che verrebbero collegati:\n'+orders.join(', ')+'\n\n'+
+    'Clienti/Fermate che verrebbero proposti:\n'+clients.join('\n')+'\n\n'+
+    'Firebase NON è stato modificato.'
+  );
+}
+
+async function importExcelTest(file){
+  if(!file) return;
+  try{
+    const data=await file.arrayBuffer();
+    const wb=XLSX.read(data,{type:'array',cellDates:false});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const rows=XLSX.utils.sheet_to_json(ws,{defval:''});
+    const mapped=rows.map(r=>({
+      data:excelDateToISO(r['Data spedizione']||r['Data spedizione1']),
+      tratta:String(r['Codice Tratta']||'').trim(),
+      ordine:cleanOrder(r['Ordini Vendita Txt']||r['Nr.']),
+      cliente:String(r['Nome Destinazione']||'').trim(),
+      destinazione:String(r['Nr. destinazione']||'').trim(),
+      volume:r['Volume']||'',
+      metodo:String(r['Cod. metodo di spedizione']||'').trim(),
+      stato:String(r['Stato Logistico']||r['Stato']||'').trim()
+    })).filter(r=>r.ordine||r.cliente||r.data||r.tratta);
+    // Raggruppa l'Excel per Data spedizione + Tratta e cerca il giro corrispondente.
+    const groups={};
+    mapped.forEach(r=>{
+      const key=r.data+'||'+r.tratta;
+      if(!groups[key]) groups[key]={data:r.data,tratta:r.tratta,rows:[]};
+      groups[key].rows.push(r);
+    });
+    const grouped=Object.values(groups).sort((a,b)=>(a.data+a.tratta).localeCompare(b.data+b.tratta));
+    let found=0;
+    const cards=grouped.map(gr=>{
+      const matches=giri.filter(g=>g.data===gr.data && String(g.tratta||'').trim()===gr.tratta);
+      const orders=[...new Set(gr.rows.flatMap(r=>r.ordine.split(',').map(x=>x.trim())).filter(Boolean))];
+      const clients=[...new Set(gr.rows.map(r=>r.cliente).filter(Boolean))];
+      if(matches.length) found++;
+      const status=matches.length===1
+        ? `<span style="color:#137333;font-weight:700">✓ Giro trovato</span>`
+        : matches.length>1
+          ? `<span style="color:#b06000;font-weight:700">⚠ ${matches.length} giri trovati</span>`
+          : `<span style="color:#b3261e;font-weight:700">✕ Giro non trovato</span>`;
+      const giroInfo=matches.length ? matches.map(g=>`${esc(g.tratta)}${g.zona?' — '+esc(g.zona):''}${g.ordini?' | Ordini attuali: '+esc(g.ordini):''}`).join('<br>') : 'Nessuna corrispondenza nel calendario';
+      return `<div style="border:1px solid #d9dee3;border-radius:8px;padding:10px;margin:8px 0;background:#fff">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><strong>${esc(gr.data)} — ${esc(gr.tratta)}</strong>${status}</div>
+        <div style="margin-top:5px"><b>${orders.length}</b> ordini Excel: ${esc(orders.join(', '))}</div>
+        <div style="margin-top:3px;color:#555">Clienti: ${esc(clients.join(' | '))}</div>
+        <div style="margin-top:5px;padding:6px;background:#f5f7f9">${giroInfo}</div>
+        ${matches.length===1?`<button class="btn" style="margin-top:7px" onclick="previewLinkTest('${esc(gr.data)}','${esc(gr.tratta).replace(/'/g,'&#39;')}')">🔗 Simula collegamento</button>`:''}
+      </div>`;
+    }).join('');
+    document.getElementById('importSummary').innerHTML=`<strong>${mapped.length}</strong> righe lette da <strong>${esc(file.name)}</strong> — <strong>${grouped.length}</strong> gruppi Data+Tratta — <strong>${found}</strong> con giro trovato. <b>TEST: nessun dato viene scritto su Firebase.</b>`;
+    document.getElementById('importMatches').innerHTML=cards;
+    window.__importMapped=mapped;
+    const head=['Data spedizione','Tratta','Ordine vendita','Cliente','Nr. destinazione','Volume','Metodo spedizione','Stato logistico'];
+    const body=mapped.slice(0,500).map(r=>`<tr>${[r.data,r.tratta,r.ordine,r.cliente,r.destinazione,r.volume,r.metodo,r.stato].map(v=>`<td style="border:1px solid #e4e7eb;padding:6px">${esc(v)}</td>`).join('')}</tr>`).join('');
+    document.getElementById('importTable').innerHTML=`<thead><tr>${head.map(h=>`<th style="position:sticky;top:0;background:#004b67;color:white;border:1px solid #e4e7eb;padding:7px">${h}</th>`).join('')}</tr></thead><tbody>${body}</tbody>`;
+    document.getElementById('importBg').classList.add('open');
+  }catch(err){console.error(err);alert('Errore nella lettura Excel: '+err.message)}
+}
+
+async function importExcelIntoOpenGiro(file){
+  if(!file)return;
+  try{
+    const buf=await file.arrayBuffer();
+    const wb=XLSX.read(buf,{type:'array',cellDates:true});
+    const ws=wb.Sheets[wb.SheetNames.includes('TRATTA')?'TRATTA':wb.SheetNames[0]];
+    const matrix=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+    const headerIndex=matrix.findIndex(row=>row.some(c=>String(c).trim().toLowerCase()==='tratta')&&row.some(c=>String(c).trim().toLowerCase()==='ordine'));
+    if(headerIndex<0)throw new Error('Non trovo le intestazioni Tratta e ordine nel foglio TRATTA');
+    const headers=matrix[headerIndex].map(x=>String(x).trim());
+    const rows=matrix.slice(headerIndex+1).map(row=>Object.fromEntries(headers.map((h,i)=>[h,row[i]??''])));
+    const norm=v=>String(v??'').trim().toLowerCase().replace(/\s+/g,' ');
+    const pick=(r,names)=>{for(const n of names){const k=Object.keys(r).find(x=>norm(x)===norm(n));if(k!==undefined && r[k]!=='' && r[k]!=null)return r[k]}return''};
+    const toDate=v=>{
+      if(v instanceof Date && !isNaN(v))return ds(v);
+      if(typeof v==='number'){const d=XLSX.SSF.parse_date_code(v);if(d)return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`}
+      const t=String(v||'').trim();
+      let m=t.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);if(m)return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+      m=t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);if(m)return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+      return t;
+    };
+    const mapped=rows.map(r=>({
+      data:toDate(pick(r,['Data spedizione','Data Spedizione','Shipment Date'])),
+      tratta:String(pick(r,['Codice tratta','Tratta','Cod. tratta'])).trim(),
+      ordine:String(pick(r,['Ordine vendita','Ordini Vendita Txt','Nr. ordine','Numero ordine','Ordine','ordine'])).trim(),
+      cliente:String(pick(r,['Ragione sociale Dest','Ragione sociale Ord','Cliente/destinazione','Ragione sociale','Nome cliente','Cliente'])).trim(),
+      codiceCliente:String(pick(r,['Cliente'])).trim(),
+      ragSocialeOrd:String(pick(r,['Ragione sociale Ord'])).trim(),
+      provincia:String(pick(r,['Prov','Provincia'])).trim(),
+      destinazione:String(pick(r,['Nr. destinazione','Destinazione','Codice destinazione'])).trim(),
+      volume:pick(r,['Volume','Volume m3','Volume m³','VOL','Somma di Volume']),peso:pick(r,['KG','Peso','Somma di Peso']),citta:pick(r,['Città','Citta']),spedwh:pick(r,['Sped. WH'])
+    })).filter(r=>r.ordine && !/totale complessivo|grand total/i.test(r.tratta));
+    if(!mapped.length){ alert('Nel file non ho trovato ordini leggibili.'); return; }
+    showOrderPicker(mapped);
+  }catch(err){console.error(err);alert('Errore nella lettura Excel: '+err.message)}
+}
+
+function showOrderPicker(rows){
+ const old=document.getElementById('orderPickerOverlay');if(old)old.remove();
+ const overlay=document.createElement('div');overlay.id='orderPickerOverlay';overlay.className='modernPickOverlay';
+ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const box=document.createElement('div');box.className='modernPick';
+ box.innerHTML=`<header class="mpHead"><div><h2>📊 Importa ordini da Excel</h2><p>Seleziona una tratta e controlla gli ordini prima di applicarli al giro.</p></div><button id="pickClose" class="mpClose" aria-label="Chiudi">✕</button></header>
+ <div class="mpControls"><label>Tratta<select id="pickRoute"><option value="">Tutte le tratte</option></select></label><label>Ricerca<input id="pickSearch" placeholder="Ordine, cliente, città, WH..."></label><div class="mpGiro">Giro aperto<br><strong>${esc(data.value||'—')} · ${esc(tratta.value||'—')}</strong></div></div>
+ <div class="mpContent"><div class="mpLeft"><div class="mpToolbar"><button id="pickAll" class="mpBtn mpBlue">☑ Seleziona tutta la tratta</button><button id="pickNone" class="mpBtn">Deseleziona tutti</button><span id="pickCount"></span></div>
+ <div class="mpTableWrap"><table class="mpTable"><thead><tr><th>✓</th><th>Tratta</th><th>Codice cliente</th><th>Sped. WH</th><th>Rag. sociale Ord</th><th>Rag. sociale Dest</th><th>Città</th><th>Prov.</th><th>Ordine</th><th>VOL m³</th><th>KG</th></tr></thead><tbody id="pickBody"></tbody></table></div></div>
+ <aside class="mpSide"><div class="mpPanel"><small>TRATTA SELEZIONATA</small><h2 id="mpRouteName">—</h2><div class="mpMetric"><span>Righe selezionate</span><strong id="mpSelected">0</strong></div><div class="mpMetric"><span>Volume totale</span><strong id="mpVolume">0,000 m³</strong></div><div class="mpMetric"><span>Peso totale</span><strong id="mpWeight">0,0 kg</strong></div><div class="mpMetric"><span>Clienti distinti</span><strong id="mpClients">0</strong></div><div class="mpMetric"><span>Spedizioni WH</span><strong id="mpWh">0</strong></div></div><p class="mpNote">I dati sostituiranno quelli importati in precedenza nel giro. I dati vengono salvati nel giro operativo solo dopo aver premuto Salva.</p></aside></div>
+ <footer class="mpFoot"><span id="mpFooterInfo">Nessun ordine selezionato</span><div><button id="pickCancel" class="mpBtn">Annulla</button><button id="pickAdd" class="mpBtn mpBlue">✓ Applica ordini al giro</button></div></footer>`;
+ overlay.appendChild(box);document.body.appendChild(overlay);
+ const fmt=(v,n)=>{const x=toNum(v);return x.toLocaleString('it-IT',{minimumFractionDigits:n,maximumFractionDigits:n})};
+ function toNum(v){if(typeof v==='number')return v;const t=String(v??'').trim().replace(/\s/g,'');return Number(t.includes(',')?t.replace(/\./g,'').replace(',','.'):t)||0}
+ const body=box.querySelector('#pickBody');
+ rows.forEach((r,i)=>{const tr=document.createElement('tr');tr.dataset.search=Object.values(r).join(' ').toLowerCase();tr.innerHTML=`<td><input type="checkbox" class="pickOrder" data-i="${i}"></td><td>${esc(r.tratta)}</td><td>${esc(r.codiceCliente)}</td><td>${esc(r.spedwh)}</td><td title="${esc(r.ragSocialeOrd)}">${esc(r.ragSocialeOrd)}</td><td title="${esc(r.cliente)}">${esc(r.cliente)}</td><td>${esc(r.citta)}</td><td>${esc(r.provincia)}</td><td><b>${esc(r.ordine)}</b></td><td>${fmt(r.volume,3)}</td><td>${fmt(r.peso,1)}</td>`;body.appendChild(tr)});
+ const routeSelect=box.querySelector('#pickRoute');[...new Set(rows.map(r=>r.tratta).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'it')).forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;routeSelect.appendChild(o)});
+ const checks=()=>[...box.querySelectorAll('.pickOrder')];
+ const selected=()=>checks().filter(c=>c.checked).map(c=>rows[+c.dataset.i]);
+ function update(){const chosen=selected();box.querySelector('#mpSelected').textContent=chosen.length;box.querySelector('#mpVolume').textContent=fmt(chosen.reduce((s,r)=>s+toNum(r.volume),0),3)+' m³';box.querySelector('#mpWeight').textContent=fmt(chosen.reduce((s,r)=>s+toNum(r.peso),0),1)+' kg';box.querySelector('#mpClients').textContent=new Set(chosen.map(r=>r.codiceCliente||r.cliente).filter(Boolean)).size;box.querySelector('#mpWh').textContent=new Set(chosen.map(r=>r.spedwh).filter(Boolean)).size;box.querySelector('#mpRouteName').textContent=routeSelect.value||'Tutte';box.querySelector('#mpFooterInfo').textContent=chosen.length+' righe selezionate';}
+ function filterRows(){const q=box.querySelector('#pickSearch').value.trim().toLowerCase(),route=routeSelect.value;[...body.children].forEach((tr,i)=>tr.hidden=!!((route&&rows[i].tratta!==route)||!tr.dataset.search.includes(q)));box.querySelector('#pickCount').textContent=[...body.children].filter(tr=>!tr.hidden).length+' visibili su '+rows.length;update()}
+ routeSelect.onchange=()=>{checks().forEach(c=>c.checked=false);filterRows()};box.querySelector('#pickSearch').oninput=filterRows;body.onchange=update;
+ box.querySelector('#pickAll').onclick=()=>{if(!routeSelect.value){alert('Scegli prima una tratta.');return}checks().filter(c=>!c.closest('tr').hidden).forEach(c=>c.checked=true);update()};
+ box.querySelector('#pickNone').onclick=()=>{checks().forEach(c=>c.checked=false);update()};
+ const close=()=>overlay.remove();box.querySelector('#pickClose').onclick=close;box.querySelector('#pickCancel').onclick=close;
+ box.querySelector('#pickAdd').onclick=()=>{const chosen=selected();if(!chosen.length){alert('Seleziona almeno un ordine.');return}const selectedRoutes=[...new Set(chosen.map(r=>String(r.tratta||'').trim()).filter(Boolean))];if(selectedRoutes.length!==1){alert('Seleziona ordini di una sola tratta.');return}
+ tratta.value=selectedRoutes[0];ordini.value=[...new Set(chosen.map(r=>r.ordine).filter(Boolean))].join(', ');
+ clienti.value=[...new Set(chosen.map(r=>[r.cliente,[r.citta,r.provincia].filter(Boolean).join(' / ')].filter(Boolean).join(' — ')).filter(Boolean))].join('\n');
+ codiciClienti.value=[...new Set(chosen.map(r=>r.codiceCliente).filter(Boolean))].join('\n');spedizioniWh.value=[...new Set(chosen.map(r=>String(r.spedwh||'').trim()).filter(Boolean))].join('\n');ragSocialeOrd.value=[...new Set(chosen.map(r=>r.ragSocialeOrd).filter(Boolean))].join('\n');volume.value=chosen.reduce((s,r)=>s+toNum(r.volume),0).toFixed(3);aggiornaSaturazione('volume','sat');
+ giroImportMsg.className='importOk';giroImportMsg.textContent=`✓ ${chosen.length} righe importate in anteprima · tratta ${selectedRoutes[0]} · volume ${volume.value} m³. Premi Salva per registrare nel calendario operativo.`;close()};filterRows();
+}
+document.getElementById('giroExcelInput').addEventListener('change',e=>{importExcelIntoOpenGiro(e.target.files[0]);e.target.value=''});
+
+document.getElementById('excelTestInput').addEventListener('change',e=>{importExcelTest(e.target.files[0]);e.target.value=''});
+
+Object.assign(window,{showLogin,hideLogin,logoutOperator,closeImportTest,exportCSV,openAdd,changeMonth,goToday,render,openEdit,openDay,deleteGiro,closeEdit,saveGiro,addFromDay,closeDay,openOptimaFromForm,openExternalUrl});
+
+onSnapshot(query(col), snap => {
+  giri = snap.docs.map(d => ({id:d.id, ...d.data()}));
+  render();
+}, err => {
+  console.error('Errore Firestore:', err);
+  alert('Errore collegamento Firebase. Controlla le regole Firestore.');
+});
+
+render();
+</script>
+</body>
+</html>
