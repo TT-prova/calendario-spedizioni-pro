@@ -22,7 +22,7 @@
 </style>
 <style>
 .authBar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;padding:10px 18px;background:#edf4fb;border-bottom:1px solid #c9d9e8}.authBar .btn{font-size:12px}.authBar strong{color:#194b72}.authDialog{position:fixed;inset:0;background:#0008;z-index:100000;display:none;align-items:center;justify-content:center;padding:16px}.authDialog.open{display:flex}.authPanel{background:#fff;border-radius:12px;padding:25px;width:min(420px,96vw);box-shadow:0 12px 40px #0005}.authPanel label{display:block;margin-top:12px;font-weight:600}.authPanel input{display:block;width:100%;box-sizing:border-box;padding:11px;margin-top:5px;border:1px solid #aab9c7;border-radius:6px}.authPanel .buttons{display:flex;gap:10px;margin-top:18px}.authPanel .error{color:#a21c1c;min-height:20px;margin-top:10px}.readonlyNotice{color:#5a6d80;font-size:12px}
-.commercialTableWrap{overflow-x:auto;margin-top:10px}.commercialTable{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}.commercialTable th{background:#edf4fb;color:#194b72;text-align:left;padding:9px;border:1px solid #dce5ee}.commercialTable td{padding:8px;border:1px solid #e1e8f0;vertical-align:top;overflow-wrap:anywhere}.commercialTable th:first-child{width:60%}.commercialTable tr:nth-child(even){background:#f8fafc}
+.commercialTableWrap{overflow-x:auto;margin-top:10px}.commercialTable{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}.commercialTable th{background:#edf4fb;color:#194b72;text-align:left;padding:9px;border:1px solid #dce5ee}.commercialTable td{padding:8px;border:1px solid #e1e8f0;vertical-align:top;overflow-wrap:anywhere}.commercialTable th:first-child{width:34%}.commercialTable th:nth-child(2){width:43%}.commercialTable th:nth-child(3){width:23%}.commercialTable tr:nth-child(even){background:#f8fafc}
 </style></head>
 <body>
 <div class="top"><h1>Calendario Spedizioni PRO — TEST vista commerciale</h1><div class="actions"><button class="btn" onclick="exportCSV()">↓ CSV</button><button class="btn" onclick="window.print()">🖨 Stampa</button><button class="btn primary" onclick="document.getElementById('excelTestInput').click()" data-editor-only style="display:none">📊 Importa Excel</button></div></div>
@@ -162,16 +162,20 @@ function openReadOnlyGiro(id){const g=giri.find(x=>x.id===id);if(g)openDay(g.dat
 // Vista commerciale: abbina gli OVI al cliente SOLO se le righe provengono
 // dall'importazione Excel. I dati storici senza abbinamento restano visibili separatamente.
 function renderClienteOrdini(g){
- const rows=Array.isArray(g.righeClienteOrdine)?g.righeClienteOrdine:[];
- if(!rows.length)return '';
- const groups=new Map();
- rows.forEach(r=>{
-   const key=String(r.codiceCliente||r.cliente||r.ragSocialeOrd||'').trim()+'|'+String(r.cliente||'').trim();
-   if(!groups.has(key))groups.set(key,{cliente:r.cliente||r.ragSocialeOrd||r.codiceCliente||'Cliente non indicato',citta:r.citta||'',provincia:r.provincia||'',ordini:new Set()});
-   if(r.ordine)groups.get(key).ordini.add(String(r.ordine).trim());
- });
- const trs=[...groups.values()].map(r=>`<tr><td>${esc(r.cliente)}${r.citta?`<div style="font-size:11px;color:#64748b">${esc(r.citta)}${r.provincia?' / '+esc(r.provincia):''}</div>`:''}</td><td>${[...r.ordini].map(esc).join(', ')||'—'}</td></tr>`).join('');
- return `<div class="commercialTableWrap"><table class="commercialTable"><thead><tr><th>Cliente / destinazione</th><th>Ordini OVI</th></tr></thead><tbody>${trs}</tbody></table></div>`;
+  const rows=Array.isArray(g.righeClienteOrdine)?g.righeClienteOrdine:[];
+  if(!rows.length)return '';
+  const groups=new Map();
+  rows.forEach(r=>{
+    const ordinante=String(r.ragSocialeOrd||'').trim();
+    const destinazione=String(r.cliente||'').trim();
+    const citta=String(r.citta||'').trim();
+    const provincia=String(r.provincia||'').trim();
+    const key=JSON.stringify([ordinante,destinazione,citta,provincia]);
+    if(!groups.has(key))groups.set(key,{ordinante,destinazione,citta,provincia,ordini:new Set()});
+    if(r.ordine)String(r.ordine).split(',').map(x=>x.trim()).filter(Boolean).forEach(x=>groups.get(key).ordini.add(x));
+  });
+  const trs=[...groups.values()].map(r=>`<tr><td>${esc(r.ordinante)||'—'}</td><td>${esc(r.destinazione)||'—'}${r.citta?`<div style="font-size:11px;color:#64748b">${esc(r.citta)}${r.provincia?' / '+esc(r.provincia):''}</div>`:''}</td><td>${[...r.ordini].map(esc).join(', ')||'—'}</td></tr>`).join('');
+  return `<div class="commercialTableWrap"><table class="commercialTable"><thead><tr><th>Ragione sociale Ord.</th><th>Ragione sociale Dest.</th><th>Ordini OVI</th></tr></thead><tbody>${trs}</tbody></table></div>`;
 }
 
 function openDay(date){selectedDay=date;let d=new Date(date);dayTitle.textContent=d.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase());let list=filterGiri(giri.filter(g=>g.data===date));dayCards.innerHTML=list.length?list.map(g=>{let c=satClass(g.sat);let docs="";let optima=g.linkOptima||g.linkBC;let optimaBtn=optima?`<button class="btn small" onclick="openExternalUrl(${JSON.stringify(optima)},'link Optima')">🚚 Apri Optima</button>`:'';let excel='';let clienteOrdini=renderClienteOrdini(g);return `<div class="card"><div class="cardTop"><div class="cardTitle">${satLabel(g.sat)} ${g.tratta||''} ${g.zona||''}</div><span class="pill ${c}">${g.sat||0}%</span></div><div class="meta"><span>🚛 ${g.mezzo||'-'}</span><span>👨‍✈️ ${g.autista||'-'}</span><span>📦 ${g.colli||0}</span><span>📏 ${g.volume||0} m³</span><span>${g.stato}</span></div>${clienteOrdini || (g.clienti?`<div style="margin-top:8px;white-space:pre-line">${esc(g.clienti)}</div>`:'')}${g.ritiri?`<div style="margin-top:8px;white-space:pre-line"><b>Ritiri fornitori:</b>\n${g.ritiri}</div>`:''}${!clienteOrdini && g.ordini?`<div class="meta">Ordini (non abbinati): ${esc(g.ordini)}</div>`:''}${(docs||optimaBtn||excel)?`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${docs} ${optimaBtn} ${excel}</div>`:''}<div style="margin-top:10px">${canEdit?`<button class="btn small primary" onclick="closeDay();openEdit('${g.id}')">Modifica</button>`:""}</div></div>`}).join(''):'<div class="empty">Nessun giro programmato in questa data.</div>';dayBg.classList.add('open')}
@@ -334,7 +338,7 @@ function showOrderPicker(rows){
  tratta.value=selectedRoutes[0];ordini.value=[...new Set(chosen.map(r=>r.ordine).filter(Boolean))].join(', ');
  clienti.value=[...new Set(chosen.map(r=>[r.cliente,[r.citta,r.provincia].filter(Boolean).join(' / ')].filter(Boolean).join(' — ')).filter(Boolean))].join('\n');
  codiciClienti.value=[...new Set(chosen.map(r=>r.codiceCliente).filter(Boolean))].join('\n');spedizioniWh.value=[...new Set(chosen.map(r=>String(r.spedwh||'').trim()).filter(Boolean))].join('\n');ragSocialeOrd.value=[...new Set(chosen.map(r=>r.ragSocialeOrd).filter(Boolean))].join('\n');volume.value=chosen.reduce((s,r)=>s+toNum(r.volume),0).toFixed(3);aggiornaSaturazione('volume','sat');
- giroImportMsg.className='importOk';giroImportMsg.textContent=`✓ ${chosen.length} righe cliente–OVI abbinate · tratta ${selectedRoutes[0]} · volume ${volume.value} m³. Premi Salva per vedere la tabella nel calendario TEST.`;close()};filterRows();
+ giroImportMsg.className='importOk';giroImportMsg.textContent=`✓ ${chosen.length} righe cliente–OVI abbinate · tratta ${selectedRoutes[0]} · volume ${volume.value} m³. Premi Salva per vedere la tabella nel calendario.`;close()};filterRows();
 }
 document.getElementById('giroExcelInput').addEventListener('change',e=>{importExcelIntoOpenGiro(e.target.files[0]);e.target.value=''});
 
