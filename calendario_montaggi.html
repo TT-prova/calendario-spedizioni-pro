@@ -28,16 +28,30 @@ body{background:#eef2f6}header{background:#123454}.calendar{padding:18px}.monthb
 .wrap{padding:10px 14px}.toolbar{padding:10px;gap:7px;margin-bottom:9px}.calendar{padding:10px}.monthbar{margin-bottom:7px}.monthbar h2{font-size:19px}.compact-control{margin-bottom:6px}.legend{gap:8px}.nuova-settimana thead th{padding:8px 10px!important;font-size:13px}.nuova-settimana th:first-child{width:64px}.nuova-settimana td{padding:4px 6px!important}.nuova-settimana tbody>tr>th{padding:4px!important}.giorno-nome{display:inline;font-size:10px}.giorno-numero{display:inline;font-size:19px;margin-left:4px}.oggi-label{display:block;font-size:8px}.compatta .nuova-settimana .scheda,.nuova-settimana .scheda{padding:4px 7px!important;margin:0 0 3px!important;box-shadow:none;border-radius:5px;position:relative}.compatta .nuova-settimana .scheda strong,.nuova-settimana .scheda strong{font-size:12px!important;line-height:1.2!important;margin:0!important}.nuova-settimana .apri-scheda>span:not(.tag):not(.stock-inviato){font-size:10px!important}.nuova-settimana .apri-scheda>br{display:none}.nuova-settimana .scheda .tag{display:inline-block;font-size:9px!important;padding:2px 5px!important;margin:2px 0 0 5px!important}.nuova-settimana .stock-inviato{display:inline-block;font-size:9px;padding:2px 4px;margin:2px 0 0 4px}.nuova-settimana .scheda details{display:inline-block!important;margin:3px 10px 0 0!important;font-size:10px!important}.nuova-settimana .scheda details[open]{display:block!important}.nuova-settimana .scheda summary{font-size:10px}.nuova-settimana .scheda>.small{display:none}.nuova-settimana .aggiungi{font-size:10px!important;padding:1px 5px!important;line-height:1.3}.nuova-settimana .assegna-label{margin:4px 0}.nuova-settimana .assegna-label select{font-size:11px;padding:3px}.nuova-settimana .weekend:has(td .scheda) td{padding:4px 6px!important}.nuova-settimana .weekend:not(:has(.scheda)) td,.nuova-settimana .weekend:not(:has(.scheda)) th{padding-top:1px!important;padding-bottom:1px!important}.compatta .nuova-settimana td{height:auto!important}
 
 .giorni-alto{min-width:1000px;border-collapse:separate;border-spacing:0}.giorni-alto th:first-child{width:100px}.giorni-alto thead th{background:#123454;color:white;text-align:center;padding:8px 4px!important}.giorni-alto .giorno-nome{color:inherit;font-size:11px;display:inline}.giorni-alto .giorno-numero{color:inherit;font-size:17px;display:inline}.giorni-alto .giorno-oggi{background:#2563eb!important}.giorni-alto .oggi-label{color:white}.giorni-alto tbody>tr>th{font-size:13px;background:#edf3fa;padding:10px!important}.giorni-alto tbody>tr:last-child>th{background:#fff1d6;color:#855513}.giorni-alto td,.compatta .giorni-alto td{height:auto;min-height:70px;padding:5px!important;background:white}.giorni-alto td.weekend{background:#f3f5f8}.giorni-alto td.col-oggi{background:#eff6ff}.giorni-alto .scheda,.compatta .giorni-alto .scheda{padding:6px!important;margin:0 0 4px!important;box-shadow:none}.giorni-alto .scheda strong,.compatta .giorni-alto .scheda strong{font-size:12px!important;line-height:1.25!important;overflow-wrap:anywhere}.giorni-alto .apri-scheda>span:not(.tag){font-size:10px!important}.giorni-alto .tag{font-size:9px!important;padding:2px 4px!important}.giorni-alto .stock-inviato{font-size:9px;padding:2px 4px}.giorni-alto .scheda details{font-size:10px;margin-top:4px}.giorni-alto .scheda>.small{display:none}.giorni-alto .aggiungi{font-size:10px!important;width:auto!important;height:auto!important;padding:3px 5px!important;border-color:transparent}.giorni-alto .aggiungi:after{content:none!important}.giorni-alto .aggiungi:hover{background:#dbeafe}.giorni-alto .assegna-label select{max-width:100%;font-size:11px;padding:4px}
-.mese-settimana{margin-bottom:10px}.mese-settimana:last-child{margin-bottom:0}.mese-settimana .fuori-mese{background:#e9edf2!important;color:#94a3b8!important}.mese-settimana td{padding:3px 4px!important}.mese-settimana .scheda{margin-bottom:3px!important}.compatta .mese-settimana .scheda{padding:4px 5px!important}.compatta .mese-settimana .scheda strong{font-size:11px!important}.compatta .mese-settimana .azioni-scheda{display:none!important}.compatta .mese-settimana .scheda details:not(.azioni-scheda){display:none!important}.mese-settimana thead th{padding:5px 4px!important}.mese-settimana tbody>tr>th{font-size:11px;padding:5px!important}</style>
+.mese-settimana{margin-bottom:10px}.mese-settimana:last-child{margin-bottom:0}.mese-settimana .fuori-mese{background:#e9edf2!important;color:#94a3b8!important}.mese-settimana td{padding:3px 4px!important}.mese-settimana .scheda{margin-bottom:3px!important}.compatta .mese-settimana .scheda{padding:4px 5px!important}.compatta .mese-settimana .scheda strong{font-size:11px!important}.compatta .mese-settimana .azioni-scheda{display:none!important}.compatta .mese-settimana .scheda details:not(.azioni-scheda){display:none!important}.mese-settimana thead th{padding:5px 4px!important}.mese-settimana tbody>tr>th{font-size:11px;padding:5px!important}body:not(.montaggi-editor) [data-modifica]{display:none!important}
+</style>
 </head>
 <body>
 <header>
+  <span id="statoAccesso" role="status">Sola lettura</span>
   <h1>🔧 Calendario Montaggi</h1>
   <div class="top-actions">
-    <button class="primary" onclick="nuovoMontaggio()">+ Nuovo montaggio</button>
+    <button id="accesso" type="button">Accedi per modificare</button>
+    <button id="uscita" type="button" hidden>Esci</button>
+    <button class="primary" data-modifica onclick="nuovoMontaggio()">+ Nuovo montaggio</button>
     <button onclick="window.print()">Stampa</button>
   </div>
 </header>
+<dialog id="loginMontaggi">
+  <form id="loginForm">
+    <h2>Accedi ai Montaggi</h2>
+    <p><label>Email aziendale <input id="loginEmail" type="email" autocomplete="username" required></label></p>
+    <p><label>Password <input id="loginPassword" type="password" autocomplete="current-password" required></label></p>
+    <p id="loginErrore" role="status"></p>
+    <button type="submit">Accedi</button>
+    <button type="button" id="loginAnnulla">Annulla</button>
+  </form>
+</dialog>
 <div class="wrap">
   <div class="toolbar">
     <div class="field"><label>Cerca cliente / commessa / città</label><input id="cerca" oninput="render()" placeholder="Es. Rossi, OVI, Bologna"></div>
@@ -70,14 +84,14 @@ body{background:#eef2f6}header{background:#123454}.calendar{padding:18px}.monthb
       <div class="field full"><label>Note</label><textarea id="note" placeholder="Materiale da portare, criticità, DPI, accessi, orari..."></textarea></div>
       <div class="field full">
         <label>Allegati PDF dal desktop</label>
-        <input id="pdfInput" type="file" accept="application/pdf,.pdf" multiple onchange="aggiungiPDF(event)">
+        <input data-modifica id="pdfInput" type="file" accept="application/pdf,.pdf" multiple onchange="aggiungiPDF(event)">
         <div id="docList" style="margin-top:8px"></div>
       </div>
     </div>
     <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-      <button class="primary" id="saveBtn" onclick="salvaMontaggio()">Salva</button>
+      <button class="primary" data-modifica id="saveBtn" onclick="salvaMontaggio()">Salva</button>
       <button onclick="chiudiForm()">Annulla</button>
-      <button id="deleteBtn" class="danger hidden" onclick="eliminaMontaggio()">Elimina</button>
+      <button data-modifica id="deleteBtn" class="danger hidden" onclick="eliminaMontaggio()">Elimina</button>
     </div>
   </div>
 
@@ -93,6 +107,8 @@ body{background:#eef2f6}header{background:#123454}.calendar{padding:18px}.monthb
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyBNgpYA2d7HToJppcZ6yLDLSt3A75c9Ogk",
   authDomain: "calendario-spedizioni.firebaseapp.com",
@@ -102,9 +118,50 @@ const firebaseConfig = {
   appId: "1:214380369240:web:85551d1aa272d9f736412d"
 };
 
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig, "calendario-montaggi");
 const db = getFirestore(app);
-const col = collection(db, "montaggi");
+const raccolta = 'montaggi';
+const col = collection(db, raccolta);
+const auth = getAuth(app);
+const editor = new Set(["xQn7eUhPswP8zAma0yNetwqI8Nk2", "qBblaklA9ONbYLMphiiyTsuBAxo2", "Jfqjr86OJyXebTWBIMbAgHVkxyH3"]);
+const elemento = id => document.getElementById(id);
+const login = elemento('loginMontaggi');
+const password = elemento('loginPassword');
+const puoModificare = () => editor.has(auth.currentUser?.uid);
+
+elemento('accesso').onclick = () => {
+  elemento('loginErrore').textContent = '';
+  login.showModal();
+};
+elemento('loginAnnulla').onclick = () => login.close();
+login.addEventListener('close', () => { password.value = ''; });
+elemento('uscita').onclick = async () => {
+  try { await signOut(auth); }
+  catch { elemento('statoAccesso').textContent = 'Uscita non riuscita. Riprova.'; }
+};
+elemento('loginForm').onsubmit = async evento => {
+  evento.preventDefault();
+  const pulsante = evento.currentTarget.querySelector('[type=submit]');
+  pulsante.disabled = true;
+  try {
+    await signInWithEmailAndPassword(auth, elemento('loginEmail').value.trim(), password.value);
+    login.close();
+  } catch {
+    elemento('loginErrore').textContent = 'Accesso non riuscito. Verifica email e password.';
+  } finally {
+    pulsante.disabled = false;
+    password.value = '';
+  }
+};
+onAuthStateChanged(auth, utente => {
+  const abilitato = puoModificare();
+  document.body.classList.toggle('montaggi-editor', abilitato);
+  elemento('accesso').hidden = !!utente;
+  elemento('uscita').hidden = !utente;
+  elemento('statoAccesso').textContent = abilitato ? 'Modifica abilitata' : 'Sola lettura';
+  chiudiForm();
+  render();
+});
 
 let montaggi=[];
 let editId=null;
@@ -136,19 +193,19 @@ window.aggiornaOperatori=aggiornaOperatori;
 function assicuraOpzione(el,value){if(value && !Array.from(el.options).some(o=>o.value===value)){el.add(new Option(value,value));}}
 function dataLocale(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function statoClass(s){return (s||'Da fare').toLowerCase().replaceAll(' ','').replace('dafare','dafare')}
-function nuovoMontaggio(){editId=null; tempDocs=[]; document.getElementById('inviatoStockSystem').checked=false; campi.forEach(id=>document.getElementById(id).value=''); document.getElementById('stato').value='In attesa di conferma'; document.getElementById('data').value=dataLocale(new Date()); renderOperatori(); document.getElementById('formTitle').textContent='Nuovo montaggio'; document.getElementById('deleteBtn').classList.add('hidden'); renderDocs(); document.getElementById('formPanel').classList.remove('hidden'); window.scrollTo({top:0,behavior:'smooth'});}
+function nuovoMontaggio(){if(!puoModificare())return;editId=null; tempDocs=[]; document.getElementById('inviatoStockSystem').checked=false; campi.forEach(id=>document.getElementById(id).value=''); document.getElementById('stato').value='In attesa di conferma'; document.getElementById('data').value=dataLocale(new Date()); renderOperatori(); document.getElementById('formTitle').textContent='Nuovo montaggio'; document.getElementById('deleteBtn').classList.add('hidden'); renderDocs(); document.getElementById('formPanel').classList.remove('hidden'); window.scrollTo({top:0,behavior:'smooth'});}
 function apriMontaggio(id){const m=montaggi.find(x=>x.id===id); if(!m)return; editId=id; document.getElementById('inviatoStockSystem').checked=m.inviatoStockSystem===true; tempDocs=[...(m.docs||[])]; campi.forEach(k=>{const el=document.getElementById(k); if(el.tagName==='SELECT'&&k!=='squadra')assicuraOpzione(el,m[k]); el.value=k==='squadra'&&!['Squadra 1','Squadra 2'].includes(m[k])?'':(m[k]||'');}); if(m.squadra&&!['Squadra 1','Squadra 2'].includes(m.squadra))document.getElementById('operatori').value=[m.operatori,m.squadra].filter(Boolean).join(', ');renderOperatori(); document.getElementById('formTitle').textContent='Modifica montaggio'; document.getElementById('deleteBtn').classList.remove('hidden'); renderDocs(); document.getElementById('formPanel').classList.remove('hidden'); window.scrollTo({top:0,behavior:'smooth'});}
 function chiudiForm(){document.getElementById('formPanel').classList.add('hidden'); editId=null; tempDocs=[]; document.getElementById('inviatoStockSystem').checked=false; document.getElementById('pdfInput').value='';}
-async function salvaMontaggio(){if(saving)return; let m={}; campi.forEach(k=>m[k]=document.getElementById(k).value.trim()); m.inviatoStockSystem=document.getElementById('inviatoStockSystem').checked; if(!m.cliente||!m.data){alert('Cliente e data montaggio sono obbligatori.');return;} if(m.dataFine&&m.dataFine<m.data){alert('La data fine non può precedere la data inizio.');return;} if(!m.stato){alert('Seleziona lo stato del montaggio.');return;} saving=true; document.getElementById('saveBtn').disabled=true; try{ m.docs=tempDocs; m.updatedAt=new Date().toISOString(); if(editId){await updateDoc(doc(db,'montaggi',editId),m);}else{m.createdAt=new Date().toISOString(); await addDoc(col,m);} chiudiForm();}catch(err){console.error(err);alert('Salvataggio non riuscito. I dati inseriti restano nel modulo. '+err.message);}finally{saving=false;document.getElementById('saveBtn').disabled=false;}}
-async function eliminaMontaggio(){if(!editId)return; if(confirm('Eliminare questo montaggio?')){await deleteDoc(doc(db,'montaggi',editId)); chiudiForm();}}
+async function salvaMontaggio(){if(!puoModificare())return;if(saving)return; let m={}; campi.forEach(k=>m[k]=document.getElementById(k).value.trim()); m.inviatoStockSystem=document.getElementById('inviatoStockSystem').checked; if(!m.cliente||!m.data){alert('Cliente e data montaggio sono obbligatori.');return;} if(m.dataFine&&m.dataFine<m.data){alert('La data fine non può precedere la data inizio.');return;} if(!m.stato){alert('Seleziona lo stato del montaggio.');return;} saving=true; document.getElementById('saveBtn').disabled=true; try{ m.docs=tempDocs; m.updatedAt=new Date().toISOString(); if(editId){await updateDoc(doc(db,raccolta,editId),m);}else{m.createdAt=new Date().toISOString(); await addDoc(col,m);} chiudiForm();}catch(err){console.error(err);alert('Salvataggio non riuscito. I dati inseriti restano nel modulo. '+err.message);}finally{saving=false;document.getElementById('saveBtn').disabled=false;}}
+async function eliminaMontaggio(){if(!puoModificare())return;if(!editId)return; if(confirm('Eliminare questo montaggio?')){await deleteDoc(doc(db,raccolta,editId)); chiudiForm();}}
 function filtra(){const q=document.getElementById('cerca').value.toLowerCase(); const fs=document.getElementById('filtroStato').value; const sq=document.getElementById('filtroSquadra').value.toLowerCase(); return montaggi.filter(m=>{const testo=[m.cliente,m.commessa,m.citta,m.indirizzo,m.referente,m.note,m.operatori,m.squadra].join(' ').toLowerCase(); return (!q||testo.includes(q)) && (!fs||m.stato===fs) && (!sq||(m.squadra||'').toLowerCase()===sq);});}
 function render(){document.getElementById('calGrid').classList.toggle('compatta',document.getElementById('compatto').checked);document.getElementById('mesePicker').value=dataLocale(corrente).slice(0,7); const vista=document.getElementById('vista').value; document.getElementById('calendarPanel').classList.toggle('hidden',vista==='lista'); document.getElementById('listPanel').classList.toggle('hidden',vista!=='lista'); document.getElementById('prevPeriod').textContent=vista==='settimana'?'◀ Settimana precedente':'◀ Mese precedente';document.getElementById('nextPeriod').textContent=vista==='settimana'?'Settimana successiva ▶':'Mese successivo ▶';if(vista==='settimana')renderSettimana();else if(vista==='tabella')renderTabella();else renderCalendario(); renderLista();}
-function nuovaCella(data,squadra){nuovoMontaggio();document.getElementById('data').value=data;document.getElementById('squadra').value=squadra;}
+function nuovaCella(data,squadra){if(!puoModificare())return;nuovoMontaggio();document.getElementById('data').value=data;document.getElementById('squadra').value=squadra;}
 function montaggioNelGiorno(m,iso){return !!m.data&&iso>=m.data&&iso>=''&&iso<=(m.dataFine&&m.dataFine>=m.data?m.dataFine:m.data);}
 function periodoMontaggio(m){return m.dataFine&&m.dataFine>m.data?'Dal '+formatData(m.data)+' al '+formatData(m.dataFine):formatData(m.data);}
 function indicatoreStock(m){return m.inviatoStockSystem===true?'<span class="stock-inviato">✓ Inviato a StockSystem</span>':'';}
-function scheda(m){const sc=statoClass(m.stato),assegnata=['Squadra 1','Squadra 2'].includes(m.squadra);return `<article class="event ${sc} scheda"><button class="apri-scheda" onclick="apriMontaggio('${escapeHtml(m.id)}')"><strong>${escapeHtml(m.ora||'')} ${escapeHtml(m.cliente)}</strong><span>${escapeHtml(m.commessa||'')} · ${escapeHtml(m.citta||'')}</span><br><span class="tag ${sc}">${escapeHtml(m.stato||'Da fare')}</span>${m.docs?.length?' 📎':''}${indicatoreStock(m)}${m.dataFine&&m.dataFine>m.data?`<span class="small" style="display:block">${escapeHtml(periodoMontaggio(m))}</span>`:''}</button><details class="azioni-scheda"><summary>Cambia squadra</summary><label class="assegna-label">Assegna squadra<select aria-label="Assegna squadra a ${escapeHtml(m.cliente)}" onchange="assegnaSquadra('${escapeHtml(m.id)}',this.value,this)"><option value="">Da assegnare</option><option ${m.squadra==='Squadra 1'?'selected':''}>Squadra 1</option><option ${m.squadra==='Squadra 2'?'selected':''}>Squadra 2</option></select></label></details>${m.operatori||(!assegnata&&m.squadra)?`<details><summary>Nominativi</summary>${escapeHtml(m.operatori||m.squadra)}</details>`:'<div class="small">Nominativi da compilare nella scheda</div>'}</article>`;}
-async function assegnaSquadra(id,squadra,select){if(assegnazioni.has(id))return;const m=montaggi.find(x=>x.id===id);if(!m)return;const precedente=m.squadra||'';if(editId===id){alert('Questo montaggio è aperto nel modulo. Assegna la squadra dal modulo e premi Salva.');select.value=['Squadra 1','Squadra 2'].includes(precedente)?precedente:'';return;}assegnazioni.add(id);select.disabled=true;try{const dati={squadra,updatedAt:new Date().toISOString()};if(precedente&&!['Squadra 1','Squadra 2'].includes(precedente)&&!m.operatori)dati.operatori=precedente;await updateDoc(doc(db,'montaggi',id),dati);Object.assign(m,dati);render();}catch(e){select.value=['Squadra 1','Squadra 2'].includes(precedente)?precedente:'';alert('Assegnazione non riuscita: '+e.message);}finally{assegnazioni.delete(id);select.disabled=false;}}
+function scheda(m){const sc=statoClass(m.stato),assegnata=['Squadra 1','Squadra 2'].includes(m.squadra);return `<article class="event ${sc} scheda"><button class="apri-scheda" onclick="apriMontaggio('${escapeHtml(m.id)}')"><strong>${escapeHtml(m.ora||'')} ${escapeHtml(m.cliente)}</strong><span>${escapeHtml(m.commessa||'')} · ${escapeHtml(m.citta||'')}</span><br><span class="tag ${sc}">${escapeHtml(m.stato||'Da fare')}</span>${m.docs?.length?' 📎':''}${indicatoreStock(m)}${m.dataFine&&m.dataFine>m.data?`<span class="small" style="display:block">${escapeHtml(periodoMontaggio(m))}</span>`:''}</button><details class="azioni-scheda"><summary>Cambia squadra</summary><label class="assegna-label">Assegna squadra<select aria-label="Assegna squadra a ${escapeHtml(m.cliente)}" data-modifica onchange="assegnaSquadra('${escapeHtml(m.id)}',this.value,this)"><option value="">Da assegnare</option><option ${m.squadra==='Squadra 1'?'selected':''}>Squadra 1</option><option ${m.squadra==='Squadra 2'?'selected':''}>Squadra 2</option></select></label></details>${m.operatori||(!assegnata&&m.squadra)?`<details><summary>Nominativi</summary>${escapeHtml(m.operatori||m.squadra)}</details>`:'<div class="small">Nominativi da compilare nella scheda</div>'}</article>`;}
+async function assegnaSquadra(id,squadra,select){if(!puoModificare())return;if(assegnazioni.has(id))return;const m=montaggi.find(x=>x.id===id);if(!m)return;const precedente=m.squadra||'';if(editId===id){alert('Questo montaggio è aperto nel modulo. Assegna la squadra dal modulo e premi Salva.');select.value=['Squadra 1','Squadra 2'].includes(precedente)?precedente:'';return;}assegnazioni.add(id);select.disabled=true;try{const dati={squadra,updatedAt:new Date().toISOString()};if(precedente&&!['Squadra 1','Squadra 2'].includes(precedente)&&!m.operatori)dati.operatori=precedente;await updateDoc(doc(db,raccolta,id),dati);Object.assign(m,dati);render();}catch(e){select.value=['Squadra 1','Squadra 2'].includes(precedente)?precedente:'';alert('Assegnazione non riuscita: '+e.message);}finally{assegnazioni.delete(id);select.disabled=false;}}
 function cambiaPeriodo(n){if(document.getElementById('vista').value==='settimana'){settimana.setDate(settimana.getDate()+n*7);corrente=new Date(settimana.getFullYear(),settimana.getMonth(),1);render();}else cambiaMese(n);}
 function renderSettimana(){
 const start=new Date(settimana);start.setDate(start.getDate()-(start.getDay()+6)%7);
@@ -159,7 +216,7 @@ let html='<table class="planning settimana giorni-alto"><thead><tr><th>Squadra</
 for(const d of giorni){html+=`<th class="${dataLocale(d)===oggi?'giorno-oggi':''} ${d.getDay()===0||d.getDay()===6?'weekend-head':''}"><span class="giorno-nome">${escapeHtml(d.toLocaleDateString('it-IT',{weekday:'short'}))}</span> <span class="giorno-numero">${d.getDate()}</span>${dataLocale(d)===oggi?'<span class="oggi-label">OGGI</span>':''}</th>`;}
 html+='</tr></thead><tbody>';
 for(const sq of ['Squadra 1','Squadra 2','']){html+=`<tr><th>${sq||'Da assegnare'}</th>`;
-for(const d of giorni){const iso=dataLocale(d);const eventi=dati.filter(m=>montaggioNelGiorno(m,iso)&&(sq?m.squadra===sq:!['Squadra 1','Squadra 2'].includes(m.squadra))).sort((a,b)=>(a.ora||'').localeCompare(b.ora||''));html+=`<td class="${d.getDay()===0||d.getDay()===6?'weekend':''} ${iso===oggi?'col-oggi':''}">`+eventi.map(scheda).join('')+`<button class="aggiungi" title="Aggiungi montaggio" aria-label="Aggiungi montaggio ${iso} ${sq||'da assegnare'}" onclick="nuovaCella('${iso}','${sq}')">+ Montaggio</button></td>`;}html+='</tr>';}
+for(const d of giorni){const iso=dataLocale(d);const eventi=dati.filter(m=>montaggioNelGiorno(m,iso)&&(sq?m.squadra===sq:!['Squadra 1','Squadra 2'].includes(m.squadra))).sort((a,b)=>(a.ora||'').localeCompare(b.ora||''));html+=`<td class="${d.getDay()===0||d.getDay()===6?'weekend':''} ${iso===oggi?'col-oggi':''}">`+eventi.map(scheda).join('')+`<button data-modifica class="aggiungi" title="Aggiungi montaggio" aria-label="Aggiungi montaggio ${iso} ${sq||'da assegnare'}" onclick="nuovaCella('${iso}','${sq}')">+ Montaggio</button></td>`;}html+='</tr>';}
 grid.innerHTML=html+'</tbody></table>';
 }
 window.assegnaSquadra=assegnaSquadra;window.cambiaPeriodo=cambiaPeriodo;
@@ -174,7 +231,7 @@ html+='<table class="planning settimana giorni-alto mese-settimana"><thead><tr><
 for(const d of giorni){const fuori=d.getMonth()!==corrente.getMonth();if(fuori){html+='<th class="fuori-mese" aria-label="Fuori dal mese selezionato"></th>';continue;}html+=`<th class="${dataLocale(d)===oggi?'giorno-oggi':''} ${fuori?'fuori-mese':''}"><span class="giorno-nome">${escapeHtml(d.toLocaleDateString('it-IT',{weekday:'short'}))}</span> <span class="giorno-numero">${d.getDate()}</span></th>`;}
 html+='</tr></thead><tbody>';
 for(const sq of ['Squadra 1','Squadra 2','']){html+=`<tr><th>${sq||'Da assegnare'}</th>`;
-for(const d of giorni){const iso=dataLocale(d),fuori=d.getMonth()!==corrente.getMonth();const eventi=fuori?[]:dati.filter(m=>montaggioNelGiorno(m,iso)&&(sq?m.squadra===sq:!['Squadra 1','Squadra 2'].includes(m.squadra))).sort((a,b)=>(a.ora||'').localeCompare(b.ora||''));html+=`<td class="${fuori?'fuori-mese':d.getDay()===0||d.getDay()===6?'weekend':''} ${iso===oggi?'col-oggi':''}">`+eventi.map(scheda).join('')+(fuori?'':`<button class="aggiungi" aria-label="Aggiungi montaggio ${iso} ${sq||'da assegnare'}" onclick="nuovaCella('${iso}','${sq}')">+ Montaggio</button>` )+'</td>';}
+for(const d of giorni){const iso=dataLocale(d),fuori=d.getMonth()!==corrente.getMonth();const eventi=fuori?[]:dati.filter(m=>montaggioNelGiorno(m,iso)&&(sq?m.squadra===sq:!['Squadra 1','Squadra 2'].includes(m.squadra))).sort((a,b)=>(a.ora||'').localeCompare(b.ora||''));html+=`<td class="${fuori?'fuori-mese':d.getDay()===0||d.getDay()===6?'weekend':''} ${iso===oggi?'col-oggi':''}">`+eventi.map(scheda).join('')+(fuori?'':`<button data-modifica class="aggiungi" aria-label="Aggiungi montaggio ${iso} ${sq||'da assegnare'}" onclick="nuovaCella('${iso}','${sq}')">+ Montaggio</button>` )+'</td>';}
 html+='</tr>';}
 html+='</tbody></table>';}
 grid.innerHTML=html;
@@ -186,10 +243,14 @@ function cambiaMese(n){corrente.setMonth(corrente.getMonth()+n); render();}
 function vaiMese(v){if(!v)return; const [anno,mese]=v.split('-').map(Number); corrente=new Date(anno,mese-1,1); settimana=new Date(corrente);render();}
 function formatData(s){if(!s)return''; const [y,m,d]=s.split('-'); return `${d}/${m}/${y}`;}
 function escapeHtml(s){return String(s||'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-async function aggiungiPDF(e){for(const f of e.target.files){if(f.type!=='application/pdf' && !f.name.toLowerCase().endsWith('.pdf')){alert('Puoi allegare solo PDF.');continue;} if(f.size>900000){if(!confirm(`Il file ${f.name} è grande (${Math.round(f.size/1024)} KB). Vuoi allegarlo comunque?`)) continue;} const dataUrl=await fileToDataURL(f); tempDocs.push({name:f.name,data:dataUrl,size:f.size,ts:Date.now()});} e.target.value=''; renderDocs();}
+async function aggiungiPDF(e){if(!puoModificare())return;for(const f of e.target.files){if(f.type!=='application/pdf' && !f.name.toLowerCase().endsWith('.pdf')){alert('Puoi allegare solo PDF.');continue;} if(f.size>900000){if(!confirm(`Il file ${f.name} è grande (${Math.round(f.size/1024)} KB). Vuoi allegarlo comunque?`)) continue;} const dataUrl=await fileToDataURL(f); tempDocs.push({name:f.name,data:dataUrl,size:f.size,ts:Date.now()});} e.target.value=''; renderDocs();}
 function fileToDataURL(f){return new Promise((res,rej)=>{let r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)})}
-function renderDocs(){const el=document.getElementById('docList'); if(!tempDocs.length){el.innerHTML='<div class="empty">Nessun PDF allegato</div>';return;} el.innerHTML=tempDocs.map((d,i)=>`<div class="docRow"><span class="docName">📄 ${escapeHtml(d.name)}</span><span><button type="button" onclick="openDoc(${i})">Apri</button> <button type="button" class="danger" onclick="removeDoc(${i})">Elimina</button></span></div>`).join('');}
-function removeDoc(i){tempDocs.splice(i,1);renderDocs();}
+function aggiornaCampiScheda(){
+  document.querySelectorAll('#formPanel .form-grid input, #formPanel .form-grid select, #formPanel textarea')
+    .forEach(campo => { campo.disabled = !puoModificare(); });
+}
+function renderDocs(){aggiornaCampiScheda();const el=document.getElementById('docList'); if(!tempDocs.length){el.innerHTML='<div class="empty">Nessun PDF allegato</div>';return;} el.innerHTML=tempDocs.map((d,i)=>`<div class="docRow"><span class="docName">📄 ${escapeHtml(d.name)}</span><span><button type="button" onclick="openDoc(${i})">Apri</button> <button type="button" data-modifica class="danger" onclick="removeDoc(${i})">Elimina</button></span></div>`).join('');}
+function removeDoc(i){if(!puoModificare())return;tempDocs.splice(i,1);renderDocs();}
 function openDoc(i){let d=tempDocs[i];if(!d)return;let w=window.open();w.document.write(`<iframe src="${d.data}" style="border:0;width:100%;height:100vh"></iframe>`);}
 
 window.nuovoMontaggio=nuovoMontaggio; window.apriMontaggio=apriMontaggio; window.chiudiForm=chiudiForm; window.salvaMontaggio=salvaMontaggio; window.eliminaMontaggio=eliminaMontaggio; window.render=render; window.cambiaMese=cambiaMese; window.vaiMese=vaiMese; window.aggiungiPDF=aggiungiPDF; window.openDoc=openDoc; window.removeDoc=removeDoc;
